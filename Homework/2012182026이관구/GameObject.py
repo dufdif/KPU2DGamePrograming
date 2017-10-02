@@ -18,34 +18,57 @@ class boy:  # 소년은 위치와 이미지, 프레임을 가진다.
     num=None
     LeftRun=0
     RightRun=1
-
+    LeftStand=2
+    RightStand=3
     def __init__(self,i):
         self.x = random.randint(100, 700)
         self.y = random.randint(90, 200)
         self.frame = random.randint(0, 7)
         self.dir=1  #방향
-        self.state=self.RightRun
+        self.state=random.randint(0,3)
         self.num=i
+        self.runframe=0
+        self.standframe=0
         if boy.image==None:
             boy.image = load_image('animation_sheet.png')
+    def handleLeftRun(self):
+        self.x-=5
+        self.runframe+=1
+        if self.x<0:
+            self.x=0
+            self.state=self.RightRun
+        if self.runframe==100:
+            self.state=self.LeftStand
+            self.standframe=0
+    def handleLeftStand(self):
+        self.standframe+=1
+        if self.standframe==50:
+            self.runframe=0
+            self.state=self.LeftRun
 
-    def update(self):  # 업데이트 함수는 그리기와 매 프레임마다 처리해야할 행동(x축으로 2만큼 매프레임마다 이동)을 처리
-
-        if self.state==self.RightRun:
-            self.frame = (self.frame + 1) % 8
-            self.x += 4 * self.dir
-        elif self.state==self.LeftRun:
-            self.frame = (self.frame + 1) % 8
-            self.x += 4 * self.dir
-
+    def handleRightRun(self):
+        self.x += 5
+        self.runframe += 1
         if self.x > 800:
             self.x = 800
-            self.dir=-1
-            self.state=self.LeftRun
-        elif self.x<0:
-            self.x=0
-            self.dir=1
-            self.state=self.RightRun
+            self.state = self.LeftRun
+        if self.runframe == 100:
+            self.state = self.RightStand
+            self.standframe = 0
+
+    def handleRightStand(self):
+        self.standframe += 1
+        if self.standframe == 50:
+            self.runframe = 0
+            self.state = self.RightRun
+
+    handlestate={LeftRun:handleLeftRun,RightRun:handleRightRun,LeftStand:handleLeftStand,RightStand:handleRightStand}
+
+    def update(self):  # 업데이트 함수는 그리기와 매 프레임마다 처리해야할 행동(x축으로 2만큼 매프레임마다 이동)을 처리
+        self.frame = (self.frame + 1) % 8
+        self.handlestate[self.state](self)
+
+
     def Draw(self): # 그리기 함수
         self.image.clip_draw(self.frame * 100, self.state*100, 100, 100, self.x, self.y)
 
