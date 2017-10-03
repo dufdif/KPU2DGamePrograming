@@ -10,15 +10,19 @@ from GameObject import *
 
 
 Font = None
-player =[]
-Enemy = []
-playerbullet=[]
-Enemybullet=[]
-
+player =None
+Enemy = None
+playerbullet=None
+Enemybullet=None
+Bg=None
+stageClear=False
 stage = 1
+stageEnemy1={1:22,2:30,3:40}#스테이지별 적1 의 갯수
+stageEnemy2={1:0,2:5,3:10}#스테이지별 적2의 갯수
+
 type=None
 # 유닛별로 재고가 있음. 이 재고를 다떨어지면 생성불가.
-numUnit1=5
+numUnit1=0
 numUnit2=0
 
 def handle_events():  # F1~5까지 누르면 유닛선택
@@ -57,6 +61,7 @@ def CreateStage():
     global player
     global Enemybullet
     global playerbullet
+
     Enemy.clear()
     player.clear()
     Enemybullet.clear()
@@ -65,12 +70,30 @@ def CreateStage():
     if stage == 1:
         Enemy+=[Enemy1(1) for i in range(11)]
         Enemy += [Enemy1(2) for i in range(11)]
+    elif stage == 2:
+        Enemy += [Enemy1(1) for i in range(10)]
+        Enemy += [Enemy1(2) for i in range(10)]
+        Enemy += [Enemy2(2) for i in range(5)]
+
+        Enemy += [Enemy1(3) for i in range(10)]
 
 
 def enter():
     global player
     global Font
     global Enemy
+    global stageClear
+    global playerbullet
+    global Enemybullet
+    global type
+    global Bg
+    #Bg=load_image()
+    type=None
+    player = []
+    Enemy = []
+    playerbullet = []
+    Enemybullet = []
+    stageClear=False
     CreateStage()
     Font=load_font('NANUMBARUNGOTHICBOLD.TTF',15)
 
@@ -83,7 +106,8 @@ def exit():
     del Enemybullet
     global playerbullet
     del playerbullet
-
+    global Bg
+    del Bg
 def DelObject():#지워야 할 오브젝트를 지우는 녀석.
     global Enemy
     global player
@@ -128,6 +152,8 @@ def update():
     global player
     global Enemybullet
     global playerbullet
+    global stageClear
+    global stage
     DelObject()
 
     for e in Enemy:
@@ -139,6 +165,11 @@ def update():
         eb.Update()
     for pb in playerbullet:
         pb.Update()
+
+    if len(Enemy)==0 and stageClear==False:
+        stageClear=True
+        stage+=1
+        game_framework.change_state(store_state)
 
 
 def draw():#여기서 모든 객체를 그리고 모든 폰트를 그린다. 매우 중요한 상태의 드로우함수!
