@@ -15,6 +15,7 @@ Upgrade4=0
 
 
 def enter():
+    show_cursor()
     global image
     global font
     image = load_image('storebg.png')

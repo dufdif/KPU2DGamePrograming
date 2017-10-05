@@ -17,7 +17,7 @@ Enemybullet=None
 Bg=None
 stageClear=False
 stage = 1
-stageEnemy1={1:22,2:30,3:40}#스테이지별 적1 의 갯수
+stageEnemy1={1:22,2:20,3:40}#스테이지별 적1 의 갯수
 stageEnemy2={1:0,2:5,3:10}#스테이지별 적2의 갯수
 
 type=None
@@ -25,33 +25,85 @@ type=None
 numUnit1=0
 numUnit2=0
 
+xKey=[]
+yKey=[]
+
 def handle_events():  # F1~5까지 누르면 유닛선택
     events = get_events()
     global player
+    global stage
     global type
     global numUnit1
     global numUnit2
+    global xKey
+    global yKey
 
-    for event in events:
-        if event.type == SDL_KEYDOWN:  # F1~11까지 버튼을 누르면 각 소년 오브젝트를 조종할수 있다.
-            if event.key == SDLK_ESCAPE:
-                game_framework.quit()
-            elif event.key==SDLK_F1:
-                if type != 1:
-                    type=1
-                else:
-                    type=None
-      #  elif event.type==SDLK_F2:
-      #      type=2
+    if stage%2 == 1:
+        for event in events:
+            if event.type == SDL_KEYDOWN:
+                if event.key == SDLK_ESCAPE:
+                    game_framework.quit()
+                elif event.key==SDLK_F1:
+                    if type != 1:
+                        type=1
+                    else:
+                        type=None
+          #  elif event.type==SDLK_F2:
+          #      type=2
 
-        elif event.type == SDL_MOUSEBUTTONDOWN:#누르면 그곳에 생성 단 Y는 한계선을 둠.
-            if type == 1:
-                if numUnit1>0:
-                    maxY=800 - event.y
-                    if maxY >= 200:
-                        maxY=200
-                    player+=[Unit1(event.x,maxY)]
-                    numUnit1-=1
+            elif event.type == SDL_MOUSEBUTTONDOWN:#누르면 그곳에 생성 단 Y는 한계선을 둠.
+                if type == 1:
+                    if numUnit1>0:
+                        maxY=800 - event.y
+                        if maxY >= 200:
+                            maxY=200
+                        player+=[Unit1(event.x,maxY)]
+                        numUnit1-=1
+    else:
+        hide_cursor()
+        for event in events:
+            if event.type == SDL_KEYDOWN:
+                if event.key == SDLK_ESCAPE:
+                    game_framework.quit()
+                elif event.key==SDLK_LEFT:
+                    xKey+=[0]
+                elif event.key==SDLK_RIGHT:
+                    xKey+=[1]
+
+                elif event.key == SDLK_UP:
+                    yKey += [0]
+                elif event.key == SDLK_DOWN:
+                    yKey+=[1]
+                elif event.key == SDLK_z:
+                    player[0].dir = player[0].Left
+                    player[0].dodge=True
+                elif event.key == SDLK_x:
+                    player[0].dir = player[0].Right
+                    player[0].dodge = True
+            elif event.type == SDL_KEYUP:
+                if event.key == SDLK_LEFT:
+                    if len(xKey)>0:
+                        xKey.remove(0)
+                elif event.key == SDLK_RIGHT:
+                    if len(xKey) > 0:
+                        xKey.remove(1)
+                elif event.key == SDLK_UP:
+                    if len(yKey) > 0:
+                        yKey.remove(0)
+                elif event.key == SDLK_DOWN:
+                    if len(yKey) > 0:
+                        yKey.remove(1)
+
+
+                    #elif event.type==SDL_MOUSEMOTION:
+                #player[0].x,player[0].y=event.x,800-event.y
+            #elif event.type == SDL_MOUSEBUTTONDOWN:
+            #    if event.button == SDL_BUTTON_LEFT:
+            #        player[0].dir=player[0].Left
+            #        player[0].dodge=True
+            #    else:
+            #        player[0].dir = player[0].Right
+            #        player[0].dodge = True
 
 
 #여기서 하는일 1. 아군유닛과 적군유닛을 먼저 제거. 2. 스테이지에 맞게 적군 유닛을 생성해둠
@@ -70,7 +122,10 @@ def CreateStage():
     if stage == 1:
         Enemy+=[Enemy1(1) for i in range(11)]
         Enemy += [Enemy1(2) for i in range(11)]
-    elif stage == 2:
+    elif stage ==2:
+        player+=[Pilot()]
+        Enemy+=[Boss1()]
+    elif stage == 3:
         Enemy += [Enemy1(1) for i in range(10)]
         Enemy += [Enemy1(2) for i in range(10)]
         Enemy += [Enemy2(2) for i in range(5)]
@@ -79,6 +134,8 @@ def CreateStage():
 
 
 def enter():
+    global xKey
+    global yKey
     global player
     global Font
     global Enemy
@@ -89,6 +146,9 @@ def enter():
     global Bg
     #Bg=load_image()
     type=None
+    xKey = []
+    yKey = []
+
     player = []
     Enemy = []
     playerbullet = []
@@ -107,7 +167,7 @@ def exit():
     global playerbullet
     del playerbullet
     global Bg
-    del Bg
+    #del Bg
 def DelObject():#지워야 할 오브젝트를 지우는 녀석.
     global Enemy
     global player

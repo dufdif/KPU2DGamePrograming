@@ -25,11 +25,20 @@ class bullet:
         self.dm=dm
         self.x=x
         self.y=y
-        self.mx=lockon.x-self.x
-        self.my=lockon.y-self.y
-        self.sp = sp*1/math.sqrt((self.mx)*(self.mx) + (self.my)*(self.my))
-        self.mx*=self.sp
-        self.my*=self.sp
+
+        if type(lockon)==list:
+            self.mx=lockon[0]
+            self.my=lockon[1]
+
+        elif self.lockon==0:
+            self.mx=0
+            self.my=sp
+        else:
+            self.mx=lockon.x-self.x
+            self.my=lockon.y-self.y
+            self.sp = sp*1/math.sqrt((self.mx)*(self.mx) + (self.my)*(self.my))
+            self.mx*=self.sp
+            self.my*=self.sp
         self.BoundR=br
         self.delobj=False
         self.left=l
@@ -52,12 +61,16 @@ class bullet:
             x = p.x - self.x
             y = p.y - self.y
             l = math.sqrt(x * x + y * y)
-            if l <= self.BoundR+p.BoundR:
-                d=(self.dm-p.df)
-                if d<=0:
-                    d=1
-                p.hp-=d
-                self.delobj=True
+
+            if p.BoundR==0:
+                pass
+            else:
+                if l <= self.BoundR+p.BoundR:
+                    d=(self.dm-p.df)
+                    if d<=0:
+                        d=1
+                    p.hp-=d
+                    self.delobj=True
 
     def Draw(self):
         self.img.clip_draw(self.left,self.bottom,self.width,self.height, self.x, self.y)
@@ -83,7 +96,7 @@ class Enemy1:
     def __init__(self,i):
         self.wave=i
         self.x=800+random.randint(-450,450)
-        self.y=500+random.randint(-50,55)+self.wave*400
+        self.y=600+random.randint(-50,55)+self.wave*400
         if Enemy1.image==None:
             Enemy1.image =load_image('Enemy12.png')
             Enemy1.bulletimg=load_image('EnemyBullet.png')
@@ -139,7 +152,7 @@ class Enemy2:
     def __init__(self,i):
         self.wave=i
         self.x=800+random.randint(-450,450)
-        self.y=500+random.randint(-50,55)+self.wave*400
+        self.y=600+random.randint(-50,55)+self.wave*400
         if Enemy2.image==None:
             Enemy2.image =load_image('Enemy2.png')
             Enemy2.bulletimg=load_image('EnemyBullet.png')
@@ -263,4 +276,209 @@ class Unit1:
             self.Dodge()
 
         return ai
+
+
+
+
+
+class Boss1:
+    STATE = ['Attack1', 'Attack2']
+    phase=0
+    curState=STATE[0]
+    threat=0
+    image=None
+    bulletimg=None
+    hp=2000#체력
+    df=0#방어력
+    dm=10#공격력
+    sp=2#속도
+    fs=30#발사속도
+
+    fireframe=0
+    BoundR=60
+    delobj=False
+    def __init__(self):
+
+        self.x=800
+        self.y=1000
+        if Boss1.image==None:
+            Boss1.image =load_image('boss1_p1.png')
+            Boss1.bulletimg=load_image('EnemyBullet.png')
+
+    def Draw(self):
+        self.image.draw(self.x,self.y)
+
+
+    def Update(self):
+        if self.y>600:
+            self.y-=self.sp#움직이게함
+        else:
+            self.y=600
+        if self.hp<0:
+            self.delobj=True
+            main_state.Enemy.clear()
+
+        self.AI()
+
+
+    def Attack(self,p):
+        if self.fireframe==0:
+            if self.curState=='Attack1':
+                main_state.Enemybullet+=[bullet(self.bulletimg,5,p,main_state.player,self.dm,self.x,self.y,10,170, 303, 25, 25)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 10, [-4,-4], main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 10, [4,-4], main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                main_state.Enemybullet += [bullet(self.bulletimg, 15, p, main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                p.threat+=self.dm
+                self.fireframe+=1
+            elif self.curState=='Attack2':
+                main_state.Enemybullet += [bullet(self.bulletimg, 10, p, main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 10, [0,-5], main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 10, [-3,-2], main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 10, [3,-2], main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg,10, [4,-1], main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 10,[-4,-1],  main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 10, [-2,-2], main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 10, [2,-2], main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+
+                main_state.Enemybullet += [bullet(self.bulletimg, 15, p, main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                p.threat += self.dm
+                self.fireframe += 1
+        elif self.fireframe <self.fs:
+            self.fireframe+=1
+        else:
+            self.fireframe=0
+
+    def AI(self):
+
+        if len(main_state.player)>0:
+            self.Attack(main_state.player[0])
+        if self.hp<1000 and self.phase==0:
+            self.phase=1
+        if self.phase==1:
+            self.image = load_image('boss1_p2.png')
+            main_state.Enemy += [Enemy1(i+1) for i in range(20)]
+            main_state.Enemy += [Enemy2(i+1) for i in range(5)]
+            self.phase=2
+            self.curState=self.STATE[1]
+
+class Pilot:
+    Left=0
+    Right=1
+
+    image=None
+    bulletimg=None
+    threat=0
+    hp=150+(store_state.Upgrade3*(25))#체력
+    df=1+(store_state.Upgrade2*(1))#방어력
+    dm=25+(store_state.Upgrade1*(3))#공격력
+    sp=6#속도
+    fs=10#발사속도
+    BoundR=30
+    fireframe=0
+    delobj=False
+    frame=550
+    dir=0
+    dodge=False
+    dTick=0
+
+    def __init__(self):
+        self.x=800
+        self.y=0
+        dTick=0
+        dodge = False
+        if Pilot.image==None:
+            Pilot.image =load_image('Pilot.png')
+            Pilot.bulletimg=load_image('EnemyBullet.png')
+
+    def Draw(self):
+        self.image.clip_draw(self.frame,0,48,52,self.x,self.y+40)
+
+    def Dodge(self):
+        if self.dir == self.Left:
+            if self.frame>0:
+                self.frame-=50
+                self.BoundR=0
+                self.x-=10
+            else:
+                self.frame=550
+                self.dodge=False
+                self.BoundR=30
+        elif self.dir == self.Right:
+            if self.frame<1100:
+                self.frame+=50
+                self.BoundR=0
+                self.x+=10
+            else:
+                self.frame=550
+                self.dodge=False
+                self.BoundR=30
+
+
+    def Update(self):
+
+        if self.dodge==False:
+            if len(main_state.xKey)!=0:
+                if main_state.xKey[0]==0:
+                    self.x -= self.sp
+                else:
+                    self.x += self.sp
+
+        if len(main_state.yKey)!=0:
+            if main_state.yKey[0]==0:
+                self.y += self.sp
+            else:
+                self.y -= self.sp
+
+        if self.hp<0:
+            self.delobj=True
+        else:
+            self.Attack(0)
+
+        if self.dodge==True:
+            if self.dTick==1:
+                self.Dodge()
+                self.dTick=0
+            self.dTick+=1
+        else:
+            self.dTick = 0
+
+    def Attack(self,p):
+        if self.fireframe==0:
+            main_state.playerbullet+=[bullet(self.bulletimg,16,p,main_state.Enemy,self.dm,self.x,self.y,10,85, 303, 25,25)]
+            main_state.Enemy[0].threat+=self.dm
+            self.fireframe+=1
+        elif self.fireframe <self.fs:
+            self.fireframe+=1
+        else:
+            self.fireframe=0
+
+
+
+
+
+
+#        if self.lockon==0:
+#            if len(main_state.Enemy)>0:
+#                x = main_state.Enemy[0].x - self.x
+#                y = main_state.Enemy[0].y - self.y
+#                l = math.sqrt(x * x + y * y)
+
+
+
+#                if l <= self.BoundR + main_state.Enemy[0].BoundR:
+#                    d = (self.dm - main_state.Enemy[0].df)
+#                    if d <= 0:
+#                        d = 1
+#                    main_state.Enemy[0].hp -= d
+ #                   self.delobj = True
+ #       else:
 
