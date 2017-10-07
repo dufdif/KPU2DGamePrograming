@@ -13,6 +13,10 @@ Upgrade2=0
 Upgrade3=0
 Upgrade4=0
 
+pUpgrade1=0
+pUpgrade2=0
+pUpgrade3=0
+pUpgrade4=0
 
 def enter():
     show_cursor()
@@ -38,6 +42,11 @@ def handle_events():
     global Upgrade3
     global Upgrade4
 
+    global pUpgrade1
+    global pUpgrade2
+    global pUpgrade3
+    global pUpgrade4
+
     events = get_events()
     for event in events:
         if (event.type, event.key) == (SDL_KEYDOWN, SDLK_SPACE):
@@ -47,6 +56,15 @@ def handle_events():
                 if gold>=100:
                     main_state.numUnit1+=1
                     gold-=100
+            elif event.x>=60 and event.x<350 and event.y >= 350 and event.y<425:#  유닛2 생성
+                if gold>=150:
+                    main_state.numUnit2+=1
+                    gold-=150
+            elif event.x>=60 and event.x<350 and event.y >= 475 and event.y<540:#  유닛3 생성
+                if gold>=400:
+                    main_state.numUnit3+=1
+                    gold-=400
+
 
 
             elif event.x>=435 and event.x<620 and event.y >= 225 and event.y<310:#  업그레이드 1
@@ -66,6 +84,11 @@ def handle_events():
                     gold-=500*(Upgrade4+1)
                     Upgrade4+=1
 
+            elif event.x>=825 and event.x<1100 and event.y >= 240 and event.y<310:#  파일럿업그레이드 1
+                if gold>=1000 and pUpgrade1==0:
+                    gold-=1000
+                    pUpgrade1+=1
+
 
 
 def draw():
@@ -81,6 +104,8 @@ def draw():
     image.draw(750,400)
     font.draw(1100,740,str(gold))#골드
     font.draw(250,500,str(main_state.numUnit1))#유닛 1 갯수
+    font.draw(250,385,str(main_state.numUnit2))#유닛 2 갯수
+    font.draw(250,270,str(main_state.numUnit3))#유닛 3 갯수
 
 
     font.draw(600,565,str((Upgrade1+1)*500))#업그레이드1 비용
