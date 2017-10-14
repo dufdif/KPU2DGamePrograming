@@ -20,8 +20,6 @@ class boy:  # 소년은 위치와 이미지, 프레임을 가진다.
     RightRun=1
     LeftStand=2
     RightStand=3
-    duration=100
-
     def __init__(self,i):
         self.x = random.randint(100, 700)
         self.y = random.randint(90, 200)
@@ -39,8 +37,7 @@ class boy:  # 소년은 위치와 이미지, 프레임을 가진다.
         if self.x<0:
             self.x=0
             self.state=self.RightRun
-        if self.runframe==self.duration:
-            self.duration=random.randint(80,120)
+        if self.runframe==100:
             self.state=self.LeftStand
             self.standframe=0
     def handleLeftStand(self):
@@ -49,15 +46,13 @@ class boy:  # 소년은 위치와 이미지, 프레임을 가진다.
             self.runframe=0
             self.state=self.LeftRun
 
-
     def handleRightRun(self):
         self.x += 5
         self.runframe += 1
         if self.x > 800:
             self.x = 800
             self.state = self.LeftRun
-        if self.runframe == self.duration:
-            self.duration = random.randint(80, 120)
+        if self.runframe == 100:
             self.state = self.RightStand
             self.standframe = 0
 
@@ -71,7 +66,6 @@ class boy:  # 소년은 위치와 이미지, 프레임을 가진다.
 
     def update(self):  # 업데이트 함수는 그리기와 매 프레임마다 처리해야할 행동(x축으로 2만큼 매프레임마다 이동)을 처리
         self.frame = (self.frame + 1) % 8
-
         self.handlestate[self.state](self)
 
 
