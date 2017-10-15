@@ -5,7 +5,10 @@ from GameObject import *
 
 # --- 설계된 모든 오브젝트를 직접 생성해서 사용하며 게임진행을 한다. ---
 
+import end_state
 
+
+End=False
 
 End_time=0
 
@@ -245,26 +248,35 @@ def update():
     global stageClear
     global stage
     global End_time
+    global End
     DelObject()
 
-    for e in Enemy:
-        e.Update()
-    for p in player:
-        p.Update()
+    if stage==4:
+        End=True
 
-    for eb in Enemybullet:
-        eb.Update()
-    for pb in playerbullet:
-        pb.Update()
+    if End==True:
+        game_framework.change_state(end_state)
+    else:
+        for e in Enemy:
+            e.Update()
+        for p in player:
+            p.Update()
 
-    if len(Enemy)==0 and stageClear==False:
-        stageClear=True
-        stage+=1
-    if stageClear==True:
-        if End_time>2:
-            game_framework.change_state(store_state)
-        else:
-            End_time+=0.025
+        for eb in Enemybullet:
+            eb.Update()
+        for pb in playerbullet:
+            pb.Update()
+
+        if len(Enemy)==0 and stageClear==False:
+            stageClear=True
+            stage+=1
+        if stageClear==True:
+            if End_time>2:
+                game_framework.change_state(store_state)
+            else:
+                End_time+=0.025
+
+
 
 
 def draw():#여기서 모든 객체를 그리고 모든 폰트를 그린다. 매우 중요한 상태의 드로우함수!

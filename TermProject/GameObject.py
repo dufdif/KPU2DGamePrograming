@@ -536,20 +536,31 @@ class Boss1:
     dm=10#공격력
     sp=2#속도
     fs=30#발사속도
+    bomb = None
 
     fireframe=0
     BoundR=60
     delobj=False
     def __init__(self):
-
+        self.dframe=-1
         self.x=800
         self.y=1000
         if Boss1.image==None:
             Boss1.image =load_image('boss1_p1.png')
             Boss1.bulletimg=load_image('EnemyBullet.png')
+            Boss1.bomb=load_image('bomb.png')
+
 
     def Draw(self):
-        self.image.draw(self.x,self.y)
+        if self.hp>0:
+            self.image.draw(self.x, self.y)
+        else:
+            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
+
+        if self.phase==2:
+            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x-20,self.y)
+            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x+20,self.y)
+
 
 
     def Update(self):
@@ -557,9 +568,24 @@ class Boss1:
             self.y-=self.sp#움직이게함
         else:
             self.y=600
-        if self.hp<0:
-            self.delobj=True
+
+        if self.phase==2 and self.dframe<0:
+            self.dframe=0
+        if self.dframe>=7 and self.phase==2:
+            self.dframe=-1
+            self.phase=3
+        elif self.phase==2 and self.dframe<7:
+            self.dframe+=1
+
+        if self.hp <=0  and self.dframe < 0:
+            self.dframe = 0
+
+        if self.dframe >= 7 and self.hp<=0:
+            self.delobj = True
             main_state.Enemy.clear()
+
+        elif self.hp<=0 and self.dframe<7:
+            self.dframe += 1
 
         self.AI()
 
@@ -632,8 +658,10 @@ class Pilot:
     dir=0
     dodge=False
     dTick=0
+    bomb=None
 
     def __init__(self):
+        self.dframe=-1
         self.x=800
         self.y=0
         self.pattern1=store_state.pUpgrade1
@@ -642,9 +670,14 @@ class Pilot:
         if Pilot.image==None:
             Pilot.image =load_image('Pilot.png')
             Pilot.bulletimg=load_image('EnemyBullet.png')
+            Pilot.bomb = load_image('bomb.png')
 
     def Draw(self):
-        self.image.clip_draw(self.frame,0,48,52,self.x,self.y+40)
+        if self.hp>0:
+            self.image.clip_draw(self.frame,0,48,52,self.x,self.y+40)
+        else:
+            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
+
 
     def Dodge(self):
         if self.dir == self.Left:
@@ -672,20 +705,38 @@ class Pilot:
         if self.dodge==False:
             if len(main_state.xKey)!=0:
                 if main_state.xKey[0]==0:
-                    self.x -= self.sp
+                    if self.x>10:
+                        self.x -= self.sp
+                    else:
+                        self.x=10
                 else:
-                    self.x += self.sp
+                    if self.x<1580:
+                        self.x += self.sp
+                    else:
+                        self.x=1580
 
         if len(main_state.yKey)!=0:
             if main_state.yKey[0]==0:
                 self.y += self.sp
             else:
-                self.y -= self.sp
+                if self.y>5:
+                    self.y -= self.sp
+                else:
+                    self.y=5
 
-        if self.hp<0:
-            self.delobj=True
-        else:
+        if self.hp>0:
             self.Attack(0)
+
+        if self.hp<0 and self.dframe<0:
+            self.dframe=0
+        if self.dframe>=7:
+            self.delobj=True
+            main_state.End=True
+        else:
+            if self.hp<=0:
+                self.dframe+=1
+
+
 
         if self.dodge==True:
             if self.dTick==1:
