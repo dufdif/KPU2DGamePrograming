@@ -19,6 +19,7 @@ class bullet:
     delobj=None
     lockonlist=None
     pattern=None
+    aframe=0
     def __init__(self,image,sp,lockon,lockonlist,dm,x,y,br,l,b,w,h,pattern=0):
         self.img=image
         self.lockon=lockon
@@ -53,15 +54,16 @@ class bullet:
         self.lockonlist=lockonlist
 
     def Update(self):#해당방향으로 매틱마다 움직임 그리고 충돌할 경우 자신을 제거대상에 올림
+
         self.x+=self.mx
         self.y+=self.my
         tx=0
         ty=0
 
-        if self.y<0:
+        if self.y<-200:
             self.delobj=True
 
-        if self.y>800:
+        if self.y>1000:
             self.delobj=True
 
         if self.pattern ==0:
@@ -78,6 +80,17 @@ class bullet:
             if self.lockon.delobj==True:
                 self.delobj=True
 
+            if main_state.stage%2==0:
+                if self.aframe>=2:
+                    self.aframe=0
+                else:
+                    self.aframe+=1
+            else:
+                self.aframe=0
+
+
+        elif self.pattern==2:
+            self.aframe=1
 
         for p in self.lockonlist:
             x = p.x - self.x
@@ -95,7 +108,7 @@ class bullet:
                     self.delobj=True
 
     def Draw(self):
-        self.img.clip_draw(self.left,self.bottom,self.width,self.height, self.x, self.y)
+        self.img.clip_draw(self.left+int(self.aframe)*self.width,self.bottom,self.width,self.height, self.x, self.y)
 
 
 class Enemy1:
@@ -105,10 +118,10 @@ class Enemy1:
     image=None
     bulletimg=None
     wave=0
-    hp=100#체력
+    hp=160#체력
     df=0#방어력
     dm=10#공격력
-    sp=2#속도
+    sp=2.2#속도
     fs=100#발사속도
     rg=270#사거리
     fireframe=0
@@ -160,13 +173,17 @@ class Enemy1:
 
     def AI(self):
         ai = True  # 특정행동을 했으면 False로 바뀜
-        for p in main_state.player:
-            x = p.x - self.x
-            y = p.y - self.y
-            l = math.sqrt(x * x + y * y)
-            if l <= self.rg:
-                self.Attack(p)
-                ai = False
+        if self.y<700:
+            self.BoundR=60
+            for p in main_state.player:
+                x = p.x - self.x
+                y = p.y - self.y
+                l = math.sqrt(x * x + y * y)
+                if l <= self.rg:
+                    self.Attack(p)
+                    ai = False
+        else:
+            self.BoundR=0
 
         return ai
 
@@ -177,10 +194,10 @@ class Enemy2:
     image=None
     bulletimg=None
     wave=0
-    hp=50#체력
+    hp=100#체력
     df=0#방어력
     dm=30#공격력
-    sp=2#속도
+    sp=1.5#속도
     fs=300#발사속도
     rg=500#사거리
     fireframe=0
@@ -230,25 +247,124 @@ class Enemy2:
 
     def AI(self):
         ai=True#특정행동을 했으면 False로 바뀜
+        if self.y<700:
+            self.BoundR=60
+            if self.curState==self.STATE[0]:
+                for p in main_state.player:
+                    x=p.x-self.x
+                    y=p.y-self.y
+                    l=math.sqrt(x*x+y*y)
+                    if l<=self.rg:
+                        self.Attack(p)
+                        ai=False
+                if self.threat > 40:  # 만약 어느정도 위험하다 생각되면
+                    self.curState=self.STATE[1]
+                    d=1
 
-        if self.curState==self.STATE[0]:
+            elif self.curState==self.STATE[1]:
+                ai=False
+                self.x+=random.randint(20,80)
+
+                self.threat=0
+                self.curState=self.STATE[0]
+        else:
+            self.BoundR=0
+        return ai
+
+class Enemy3:
+    STATE = ['Attack', 'Dodge']
+    curState = 'Attack'
+    threat=0
+    d=0
+    image=None
+    bulletimg=None
+    hp=120
+    df=10
+    dm=8
+    sp=4#속도
+    fs=30
+    rg=300#사거리
+    BoundR=45
+    fireframe=0
+    delobj=False
+    dframe=-1#피가 0일때 폭팔이미지
+    bomb = None
+
+
+    def __init__(self,i):
+        self.wave=i
+        self.x=800+random.randint(-450,450)
+        self.y=600+random.randint(-50,55)+self.wave*300
+        self.aframe=0
+        if Enemy3.image==None:
+            Enemy3.image =load_image('Enemy3.png')
+            Enemy3.bulletimg=load_image('EnemyBullet.png')
+            Enemy3.bomb=load_image('bomb.png')
+#8 71
+    def Draw(self):
+        if self.hp>0:
+            self.image.clip_draw(self.aframe*64+8,0,63,79,self.x, self.y + 40)
+        else:
+            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
+
+    def Update(self):
+        if self.AI() == True:  # 아무행동도 안했으면
+            self.y -= self.sp  # 움직이게함
+        if self. hp>0:
+            self.aframe+=1
+        if self.aframe>=4:
+            self.aframe=0
+        if self.hp<0 and self.dframe<0:
+            self.dframe=0
+        if self.dframe>=7:
+            self.delobj=True
+        else:
+            if self.hp<=0:
+                self.dframe+=1
+
+    def Attack(self,p):
+        if self.fireframe==0:
+            main_state.Enemybullet += [bullet(self.bulletimg, 8, p, main_state.player, self.dm, self.x, self.y, 10, 400, 453, 25, 25,1)]
+            p.threat+=self.dm
+            self.fireframe+=1
+        elif self.fireframe <self.fs:
+            self.fireframe+=1
+        else:
+            self.fireframe=0
+
+    def Dodge(self):
+        self.d += 1
+        if self.d < 10:
+            self.x += 15
+        elif self.d >= 10 and self.d < 30:
+            self.x -= 15
+        elif self.d >= 30 and self.d < 40:
+            self.x += 15
+        else:
+            self.curState = self.STATE[0]
+            self.threat = 0
+            self.d = 0
+
+    def AI(self):
+        ai = True  # 특정행동을 했으면 False로 바뀜
+        if self.y<700:
+            self.BoundR=45
             for p in main_state.player:
-                x=p.x-self.x
-                y=p.y-self.y
-                l=math.sqrt(x*x+y*y)
-                if l<=self.rg:
+                x = p.x - self.x
+                y = p.y - self.y
+                l = math.sqrt(x * x + y * y)
+                if l <= self.rg:
                     self.Attack(p)
-                    ai=False
+                    ai = False
+                    break
             if self.threat > 40:  # 만약 어느정도 위험하다 생각되면
-                self.curState=self.STATE[1]
-                d=1
+                self.curState = self.STATE[1]
 
-        elif self.curState==self.STATE[1]:
-            ai=False
-            self.x+=random.randint(20,80)
+            if self.curState==self.STATE[1]:# 회피상태가 오면 뒤로 회피 이때 무적
+                self.Dodge()
+        else:
+            self.BoundR=0
 
-            self.threat=0
-            self.curState=self.STATE[0]
         return ai
 
 
@@ -261,10 +377,10 @@ class Unit1:
     d=0
     image=None
     bulletimg=None
-    hp=150+(store_state.Upgrade3*(25))#체력
+    hp=200+(store_state.Upgrade3*(25))#체력
     df=1+(store_state.Upgrade2*(1))#방어력
-    dm=7+(store_state.Upgrade1*(3))#공격력
-    sp=2#속도
+    dm=9+(store_state.Upgrade1*(3))#공격력
+    sp=2.2#속도
     fs=100-(store_state.Upgrade4*(5))#발사속도
     rg=300#사거리
     BoundR=60
@@ -288,7 +404,7 @@ class Unit1:
             self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
 
     def Update(self):
-        if self.AI() == True:  # 아무행동도 안했으면
+        if self.AI() == True and self.y<=600:  # 아무행동도 안했으면
             self.y += self.sp  # 움직이게함
         if self.hp<0 and self.dframe<0:
             self.dframe=0
@@ -347,10 +463,10 @@ class Unit2:
     d=0
     image=None
     bulletimg=None
-    hp=70+(store_state.Upgrade3*(25))#체력
+    hp=100+(store_state.Upgrade3*(25))#체력
     df=0+(store_state.Upgrade2*(1))#방어력
-    dm=50+(store_state.Upgrade1*(30))#공격력
-    sp=2#속도
+    dm=60+(store_state.Upgrade1*(30))#공격력
+    sp=1#속도
     fs=200-(store_state.Upgrade4*(1))#발사속도
     rg=650#사거리
     BoundR=60
@@ -376,7 +492,7 @@ class Unit2:
             self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
 
     def Update(self):
-        if self.AI() == True:  # 아무행동도 안했으면
+        if self.AI() == True and self.y<=600:  # 아무행동도 안했으면
             self.y += self.sp  # 움직이게함
         if self. hp>0:
             self.aframe+=1
@@ -440,11 +556,11 @@ class Unit3:
     image=None
     image2=None
     bulletimg=None
-    hp=500+(store_state.Upgrade3*(25))#체력
+    hp=700+(store_state.Upgrade3*(25))#체력
     df=3+(store_state.Upgrade2*(5))#방어력
-    dm=1+(store_state.Upgrade1*(1))#공격력
-    sp=3#속도
-    fs=50-(store_state.Upgrade4*(5))#발사속도
+    dm=1.5+(store_state.Upgrade1*(1))#공격력
+    sp=2#속도
+    fs=20-(store_state.Upgrade4*(5))#발사속도
     rg=250#사거리
     BoundR=130
     fireframe=0
@@ -471,7 +587,7 @@ class Unit3:
             self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
 
     def Update(self):
-        if self.AI() == True:  # 아무행동도 안했으면
+        if self.AI() == True and self.y<=600:  # 아무행동도 안했으면
             self.y += self.sp  # 움직이게함
         if self.hp<0 and self.dframe<0:
             self.dframe=0
@@ -643,8 +759,11 @@ class Pilot:
     Left=0
     Right=1
     pattern1=0
+    pattern2=0
     image=None
     bulletimg=None
+    bulletimg2=None
+    bulletimg3=None
     threat=0
     hp=150+(store_state.Upgrade3*(25))#체력
     df=1+(store_state.Upgrade2*(1))#방어력
@@ -661,20 +780,26 @@ class Pilot:
     bomb=None
 
     def __init__(self):
+        self.aframe=0;
         self.dframe=-1
         self.x=800
         self.y=0
         self.pattern1=store_state.pUpgrade1
+        self.pattern2=store_state.pUpgrade2
+        self.pattern3=store_state.pUpgrade3
         dTick=0
         dodge = False
         if Pilot.image==None:
             Pilot.image =load_image('Pilot.png')
             Pilot.bulletimg=load_image('EnemyBullet.png')
             Pilot.bomb = load_image('bomb.png')
+            Pilot.bulletimg2=load_image('EnemyBullet2.png')
+            Pilot.bulletimg3=load_image('bullet3.png')
 
     def Draw(self):
         if self.hp>0:
             self.image.clip_draw(self.frame,0,48,52,self.x,self.y+40)
+
         else:
             self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
 
@@ -736,6 +861,11 @@ class Pilot:
             if self.hp<=0:
                 self.dframe+=1
 
+        if self.aframe>=3:
+            self.aframe=0
+        else:
+            self.aframe+=1
+
 
 
         if self.dodge==True:
@@ -752,8 +882,19 @@ class Pilot:
             main_state.playerbullet+=[bullet(self.bulletimg,16,p,main_state.Enemy,self.dm,self.x,self.y,10,85, 303, 25,25)]
             if self.pattern1>0:
                 if len(main_state.Enemy)>0:
-                    main_state.playerbullet += [bullet(self.bulletimg, 16, main_state.Enemy[0], main_state.Enemy, self.dm/3, self.x, self.y, 10, 85, 303, 25, 25,1)]
+                    main_state.playerbullet += [bullet(self.bulletimg2, 16, main_state.Enemy[0], main_state.Enemy, self.dm/3, self.x, self.y, 10, 0, 0, 39,40,1)]
+            if self.pattern2>0:
+                if len(main_state.Enemy)>0:
+                    main_state.playerbullet += [bullet(self.bulletimg, 13,[-1,4], main_state.Enemy, self.dm/5, self.x, self.y, 20,85, 303, 25,25,2)]
+                    main_state.playerbullet += [bullet(self.bulletimg, 13,[1,4], main_state.Enemy, self.dm/5, self.x, self.y, 20,85, 303, 25,25,2)]
+                    main_state.playerbullet += [bullet(self.bulletimg, 13,[2,3], main_state.Enemy, self.dm/5, self.x, self.y, 20,85, 303, 25,25,2)]
+                    main_state.playerbullet += [bullet(self.bulletimg, 13,[-2,3], main_state.Enemy, self.dm/5, self.x, self.y, 20,85, 303, 25,25,2)]
 
+            if self.pattern3>0:
+                if len(main_state.Enemy)>0 and  random.randint(0,8)==2 :
+                    main_state.playerbullet += [
+                        bullet(self.bulletimg3, 25, p, main_state.Enemy, self.dm * 3, self.x, self.y, 50, 0, 0, 102,
+                               156)]
             self.fireframe+=1
         elif self.fireframe <self.fs:
             self.fireframe+=1
