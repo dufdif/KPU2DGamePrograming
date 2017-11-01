@@ -25,7 +25,7 @@ def enter():
     image = load_image('storebg.png')
     font = load_font('NANUMBARUNGOTHICBOLD.TTF',40)
     global gold
-    gold += 500 + main_state.stage*1000
+    gold += 1000 + main_state.stage*1000
 
 def exit():
     global image
@@ -89,6 +89,15 @@ def handle_events():
                     gold-=1000
                     pUpgrade1+=1
 
+            elif event.x>=825 and event.x<1100 and event.y >= 370 and event.y<440:#  파일럿업그레이드 2
+                if gold>=1500 and pUpgrade2==0:
+                    gold-=1500
+                    pUpgrade2+=1
+
+            elif event.x>=825 and event.x<1100 and event.y >= 500 and event.y<570:#  파일럿업그레이드 3
+                if gold>=1500 and pUpgrade3==0:
+                    gold-=1500
+                    pUpgrade3+=1
 
 
 def draw():

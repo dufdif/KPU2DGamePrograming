@@ -19,7 +19,7 @@ playerbullet=None
 Enemybullet=None
 Bg=None
 stageClear=False
-stage = 2
+stage = 1
 stageEnemy1={1:22,2:20,3:40}#스테이지별 적1 의 갯수
 stageEnemy2={1:0,2:5,3:10}#스테이지별 적2의 갯수
 
@@ -249,13 +249,30 @@ def update():
     global stage
     global End_time
     global End
+    global numUnit1
+    global numUnit2
+    global numUnit3
     DelObject()
+
+    if len(Enemy)>0 and (len(player)==0 and numUnit1<=0 and numUnit2<=0 and numUnit3<=0 ): #유닛도없고 적들만 있으면
+        End=True
+
+    if stage%2==1:
+        for e in Enemy:
+            if e.y<-100 :
+                End=True
 
     if stage==4:
         End=True
 
     if End==True:
-        game_framework.change_state(end_state)
+        if End_time > 1.5:
+            game_framework.change_state(end_state)
+            End_time = 0
+
+        else:
+            End_time += 0.025
+
     else:
         for e in Enemy:
             e.Update()
@@ -273,6 +290,7 @@ def update():
         if stageClear==True:
             if End_time>2:
                 game_framework.change_state(store_state)
+                End_time=0
             else:
                 End_time+=0.025
 
