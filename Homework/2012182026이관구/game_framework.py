@@ -1,3 +1,7 @@
+from pico2d import *
+
+Ctime=get_time()
+deltatime=0
 class GameState:
     def __init__(self, state):
         self.enter = state.enter
@@ -80,6 +84,11 @@ def quit():
 
 def run(start_state):
     global running, stack
+    global deltatime
+    global Ctime
+
+
+
     running = True
     stack = [start_state]
     start_state.enter()
@@ -87,10 +96,15 @@ def run(start_state):
         stack[-1].handle_events()
         stack[-1].update()
         stack[-1].draw()
+        deltatime = get_time() - Ctime
+        Ctime += deltatime
+        print(1/deltatime)
+        #delay(0.1) 이거 지우면 실험해볼수있음!
     # repeatedly delete the top of the stack
     while (len(stack) > 0):
         stack[-1].exit()
         stack.pop()
+
 
 
 def test_game_framework():
