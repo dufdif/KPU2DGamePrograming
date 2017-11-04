@@ -18,10 +18,16 @@ Enemy = None
 playerbullet=None
 Enemybullet=None
 Bg=None
+Bg2=None
+
+bgy=0
+bgy2=0
+
 stageClear=False
 stage = 1
-stageEnemy1={1:22,2:20,3:40}#스테이지별 적1 의 갯수
+stageEnemy1={1:10,2:20,3:25}#스테이지별 적1 의 갯수
 stageEnemy2={1:0,2:5,3:10}#스테이지별 적2의 갯수
+stageEnemy3={1:3,2:0,3:5}#스테이지별 적2의 갯수
 
 type=None
 # 유닛별로 재고가 있음. 이 재고를 다떨어지면 생성불가.
@@ -31,6 +37,8 @@ numUnit3=0
 
 xKey=[]
 yKey=[]
+
+
 
 def handle_events():  # F1~5까지 누르면 유닛선택
     events = get_events()
@@ -150,17 +158,19 @@ def CreateStage():
     playerbullet.clear()
 
     if stage == 1:
-        Enemy+=[Enemy1(1) for i in range(11)]
-        Enemy += [Enemy1(2) for i in range(11)]
+        Enemy+=[Enemy1(3) for i in range(5)]
+        Enemy += [Enemy1(2) for i in range(5)]
+        Enemy += [Enemy3(1) for i in range(2)]
     elif stage ==2:
         player+=[Pilot()]
         Enemy+=[Boss1()]
     elif stage == 3:
         Enemy += [Enemy1(1) for i in range(10)]
         Enemy += [Enemy1(2) for i in range(10)]
-        Enemy += [Enemy2(2) for i in range(5)]
+        Enemy += [Enemy2(2) for i in range(10)]
 
-        Enemy += [Enemy1(3) for i in range(10)]
+        Enemy += [Enemy1(3) for i in range(15)]
+        Enemy += [Enemy3(6) for i in range(5)]
 
 
 def enter():
@@ -175,7 +185,12 @@ def enter():
     global Enemybullet
     global type
     global Bg
-    #Bg=load_image()
+    global Bg2
+    global bgy
+    bgy=0
+
+    Bg=load_image('bg.jpg')
+    Bg2=load_image('bg2.jpg')
     type=None
     xKey = []
     yKey = []
@@ -200,7 +215,9 @@ def exit():
     global playerbullet
     del playerbullet
     global Bg
-    #del Bg
+    global Bg2
+    del Bg
+    del Bg2
 def DelObject():#지워야 할 오브젝트를 지우는 녀석.
     global Enemy
     global player
@@ -252,7 +269,13 @@ def update():
     global numUnit1
     global numUnit2
     global numUnit3
+    global bgy
     DelObject()
+
+    if bgy>-7220:
+        bgy-=10
+    else:
+        bgy=0
 
     if len(Enemy)>0 and (len(player)==0 and numUnit1<=0 and numUnit2<=0 and numUnit3<=0 ): #유닛도없고 적들만 있으면
         End=True
@@ -303,6 +326,12 @@ def draw():#여기서 모든 객체를 그리고 모든 폰트를 그린다. 매
     global Enemy
     global Enemybullet
     global playerbullet
+    global Bg
+    global Bg2
+    global bgy
+
+    Bg.draw(800,400+bgy)
+    Bg2.draw(800,6820+bgy)
 
     for e in Enemy:
         e.Draw()

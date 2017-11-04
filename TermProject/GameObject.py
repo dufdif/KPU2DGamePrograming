@@ -74,9 +74,11 @@ class bullet:
             ty=self.lockon.y - self.y
             self.mx=tx
             self.my=ty
+            t=math.sqrt((tx) * (tx) + (ty) * (ty))
+            if t!=0:
+                self.mx *= self.sp * 1 / t
+                self.my *= self.sp * 1 / t
 
-            self.mx *= self.sp * 1 / math.sqrt((tx) * (tx) + (ty) * (ty))
-            self.my *= self.sp * 1 / math.sqrt((tx) * (tx) + (ty) * (ty))
             if self.lockon.delobj==True:
                 self.delobj=True
 

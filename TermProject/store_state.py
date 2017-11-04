@@ -131,6 +131,8 @@ def draw():
 
     font.draw(1350,530,str(main_state.stageEnemy1[main_state.stage]))
     font.draw(1350, 430, str(main_state.stageEnemy2[main_state.stage]))
+
+    font.draw(1350, 230, str(main_state.stageEnemy3[main_state.stage]))
     update_canvas()
 
 
