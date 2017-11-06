@@ -25,9 +25,9 @@ bgy2=0
 
 stageClear=False
 stage = 1
-stageEnemy1={1:10,2:20,3:25}#스테이지별 적1 의 갯수
-stageEnemy2={1:0,2:5,3:10}#스테이지별 적2의 갯수
-stageEnemy3={1:3,2:0,3:5}#스테이지별 적2의 갯수
+stageEnemy1={1:10,2:20,3:25,4:25}#스테이지별 적1 의 갯수
+stageEnemy2={1:0,2:5,3:10,4:10}#스테이지별 적2의 갯수
+stageEnemy3={1:3,2:0,3:5,4:0}#스테이지별 적2의 갯수
 
 type=None
 # 유닛별로 재고가 있음. 이 재고를 다떨어지면 생성불가.
@@ -171,6 +171,9 @@ def CreateStage():
 
         Enemy += [Enemy1(3) for i in range(15)]
         Enemy += [Enemy3(6) for i in range(5)]
+    elif stage ==4:
+        player+=[Pilot()]
+        Enemy+=[Boss2()]
 
 
 def enter():
@@ -285,7 +288,7 @@ def update():
             if e.y<-100 :
                 End=True
 
-    if stage==4:
+    if stage==5:
         End=True
 
     if End==True:

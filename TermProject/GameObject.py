@@ -20,6 +20,7 @@ class bullet:
     lockonlist=None
     pattern=None
     aframe=0
+    accel=1.03
     def __init__(self,image,sp,lockon,lockonlist,dm,x,y,br,l,b,w,h,pattern=0):
         self.img=image
         self.lockon=lockon
@@ -93,6 +94,10 @@ class bullet:
 
         elif self.pattern==2:
             self.aframe=1
+        elif self.pattern==3:
+            self.mx*=self.accel
+            self.my*=self.accel
+
 
         for p in self.lockonlist:
             x = p.x - self.x
@@ -394,6 +399,12 @@ class Unit1:
     def __init__(self,x,y):
         self.x=x
         self.y=y
+        self.hp = 200 + (store_state.Upgrade3 * (25))  # 체력
+        self.df = 1 + (store_state.Upgrade2 * (1))  # 방어력
+        self.dm = 9 + (store_state.Upgrade1 * (3))  # 공격력
+        self.sp = 2.2  # 속도
+        self.fs = 100 - (store_state.Upgrade4 * (5))  # 발사속도
+
         if Unit1.image==None:
             Unit1.image =load_image('Unit1.png')
             Unit1.bulletimg=load_image('EnemyBullet.png')
@@ -481,6 +492,12 @@ class Unit2:
     def __init__(self,x,y):
         self.x=x
         self.y=y
+        self.hp = 100 + (store_state.Upgrade3 * (25))  # 체력
+        self.df = 0 + (store_state.Upgrade2 * (1))  # 방어력
+        self.dm = 60 + (store_state.Upgrade1 * (30))  # 공격력
+        self.sp = 1  # 속도
+        self.fs = 200 - (store_state.Upgrade4 * (1))  # 발사속도
+
         self.aframe=0
         if Unit2.image==None:
             Unit2.image =load_image('Unit2.png')
@@ -522,7 +539,7 @@ class Unit2:
         self.d+=1
         if self.d<35:
             self.BoundR=0
-            self.y-=3
+            self.y+=3
         else:
             self.curState=self.STATE[0]
             self.threat=0
@@ -540,7 +557,7 @@ class Unit2:
                 self.Attack(p)
                 ai = False
                 break
-        if self.threat > 40:  # 만약 어느정도 위험하다 생각되면
+        if self.threat > 50:  # 만약 어느정도 위험하다 생각되면
             self.curState = self.STATE[1]
 
         if self.curState==self.STATE[1]:# 회피상태가 오면 뒤로 회피 이때 무적
@@ -573,7 +590,14 @@ class Unit3:
     def __init__(self,x,y):
         self.x=x
         self.y=y
+        self.hp = 700 + (store_state.Upgrade3 * (25))  # 체력
+        self.df = 3 + (store_state.Upgrade2 * (5))  # 방어력
+        self.dm = 1.5 + (store_state.Upgrade1 * (1))  # 공격력
+        self.sp = 2  # 속도
+        self.fs = 20 - (store_state.Upgrade4 * (5))  # 발사속도
+
         self.tdf=self.df
+
         if Unit3.image==None:
             Unit3.image =load_image('Unit3.png')
             Unit3.bulletimg=load_image('EnemyBullet.png')
@@ -757,6 +781,137 @@ class Boss1:
             self.phase=2
             self.curState=self.STATE[1]
 
+
+class Boss2:
+    STATE = ['Attack1', 'Attack2']
+    phase=0
+    curState=STATE[0]
+    threat=0
+    image=None
+    bulletimg=None
+    hp=6000#체력
+    df=2#방어력
+    dm=25#공격력
+    sp=3#속도
+    fs=20#발사속도
+    a=0
+    bomb = None
+    r=7
+    fireframe=0
+    BoundR=60
+    delobj=False
+    def __init__(self):
+        self.dframe=-1
+        self.x=800
+        self.y=1000
+        if Boss2.image==None:
+            Boss2.image =load_image('boss2_1.png')
+            Boss2.bulletimg=load_image('EnemyBullet.png')
+            Boss2.bomb=load_image('bomb.png')
+
+
+    def Draw(self):
+        if self.hp>0:
+            self.image.draw(self.x, self.y)
+        else:
+            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
+
+        if self.phase==2:
+            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x-20,self.y)
+            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x+20,self.y)
+
+
+
+    def Update(self):
+        if self.y>600:
+            self.y-=self.sp#움직이게함
+        else:
+            self.y=600
+
+
+
+
+
+        if self.phase==2 and self.dframe<0:
+            self.dframe=0
+        if self.dframe>=7 and self.phase==2:
+            self.dframe=-1
+            self.phase=3
+        elif self.phase==2 and self.dframe<7:
+            self.dframe+=1
+
+        if self.hp <=0  and self.dframe < 0:
+            self.dframe = 0
+
+        if self.dframe >= 7 and self.hp<=0:
+            self.delobj = True
+            main_state.Enemy.clear()
+
+        elif self.hp<=0 and self.dframe<7:
+            self.dframe += 1
+
+        self.AI()
+
+
+    def Attack(self,p):
+        if self.fireframe==0:
+            if self.r<=7:
+                self.r-=1
+            if self.r == -7:
+                self.r = 7
+            if self.curState=='Attack1':
+                main_state.Enemybullet+=[bullet(self.bulletimg,2,p,main_state.player,self.dm,self.x,self.y,10,170, 303, 25, 25,3)]
+                main_state.Enemybullet += [bullet(self.bulletimg, 1, p, main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25,3)]
+                main_state.Enemybullet+=[bullet(self.bulletimg,3,[0,-4], main_state.player,self.dm,self.x,self.y,10,170,303,25,25)]
+                main_state.Enemybullet += [bullet(self.bulletimg, 23, [self.r, -4], main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                main_state.Enemybullet += [bullet(self.bulletimg, 23, [-self.r, -4], main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+
+                p.threat+=self.dm
+                self.fireframe+=1
+            elif self.curState=='Attack2':
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 2, p, main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25, 3)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 1, p, main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25, 3)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 3, [0, -4], main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25,
+                           25)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 23, [self.r, -4], main_state.player, self.dm, self.x, self.y, 10, 170, 303,
+                           25, 25)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 23, [-self.r, -4], main_state.player, self.dm, self.x, self.y, 10, 170, 303,
+                           25, 25)]
+
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 10, [-2,-2], main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                main_state.Enemybullet += [
+                    bullet(self.bulletimg, 10, [2,-2], main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+
+                main_state.Enemybullet += [bullet(self.bulletimg, 15, p, main_state.player, self.dm, self.x, self.y, 10, 170, 303, 25, 25)]
+                p.threat += self.dm
+                self.fireframe += 1
+        elif self.fireframe <self.fs:
+            self.fireframe+=1
+        else:
+            self.fireframe=0
+
+    def AI(self):
+
+        if len(main_state.player)>0:
+            self.Attack(main_state.player[0])
+        if self.hp<3000 and self.phase==0:
+            self.phase=1
+        if self.phase==1:
+            self.image = load_image('boss2_2.png')
+            main_state.Enemy += [Enemy1(i+1) for i in range(20)]
+            main_state.Enemy += [Enemy2(i+1) for i in range(5)]
+            self.phase=2
+            self.curState=self.STATE[1]
+
+
+
+
 class Pilot:
     Left=0
     Right=1
@@ -767,12 +922,12 @@ class Pilot:
     bulletimg2=None
     bulletimg3=None
     threat=0
-    hp=150+(store_state.Upgrade3*(25))#체력
-    df=1+(store_state.Upgrade2*(1))#방어력
-    dm=25+(store_state.Upgrade1*(3))#공격력
+    hp=150+(store_state.Upgrade3*(50))#체력
+    df=1+(store_state.Upgrade2*(3))#방어력
+    dm=25+(store_state.Upgrade1*(1000))#공격력
     sp=6#속도
     fs=10#발사속도
-    BoundR=30
+    BoundR=17
     fireframe=0
     delobj=False
     frame=550
@@ -782,6 +937,13 @@ class Pilot:
     bomb=None
 
     def __init__(self):
+        self.hp = 150 + (store_state.Upgrade3 * (40))  # 체력
+        self.df = 1 + (store_state.Upgrade2 * (3))  # 방어력
+        self.dm = 25 + (store_state.Upgrade1 * (10))  # 공격력
+        self.sp = 6  # 속도
+        self.fs = 10  # 발사속도
+        self.BoundR = 17
+
         self.aframe=0;
         self.dframe=-1
         self.x=800

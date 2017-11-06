@@ -68,20 +68,20 @@ def handle_events():
 
 
             elif event.x>=435 and event.x<620 and event.y >= 225 and event.y<310:#  업그레이드 1
-                if gold>=500*(Upgrade1+1):
-                    gold-=500*(Upgrade1+1)
+                if gold>=250*(Upgrade1+1):
+                    gold-=250*(Upgrade1+1)
                     Upgrade1+=1
             elif event.x>=435 and event.x<620 and event.y >= 365 and event.y<450:#  업그레이드 2
-                if gold>=500*(Upgrade2+1):
-                    gold-=500*(Upgrade2+1)
+                if gold>=250*(Upgrade2+1):
+                    gold-=250*(Upgrade2+1)
                     Upgrade2+=1
             elif event.x>=435 and event.x<620 and event.y >= 405 and event.y<590:#  업그레이드 3
-                if gold>=500*(Upgrade3+1):
-                    gold-=500*(Upgrade3+1)
+                if gold>=250*(Upgrade3+1):
+                    gold-=250*(Upgrade3+1)
                     Upgrade3+=1
             elif event.x>=435 and event.x<620 and event.y >= 445 and event.y<730:#  업그레이드 4
-                if gold>=500*(Upgrade4+1):
-                    gold-=500*(Upgrade4+1)
+                if gold>=250*(Upgrade4+1):
+                    gold-=250*(Upgrade4+1)
                     Upgrade4+=1
 
             elif event.x>=825 and event.x<1100 and event.y >= 240 and event.y<310:#  파일럿업그레이드 1
@@ -117,16 +117,16 @@ def draw():
     font.draw(250,270,str(main_state.numUnit3))#유닛 3 갯수
 
 
-    font.draw(600,565,str((Upgrade1+1)*500))#업그레이드1 비용
+    font.draw(600,565,str((Upgrade1+1)*250))#업그레이드1 비용
     font.draw(600, 510, str(Upgrade1))#업그레이드1 횟수
 
-    font.draw(600,425,str((Upgrade2+1)*500))#업그레이드2 비용
+    font.draw(600,425,str((Upgrade2+1)*250))#업그레이드2 비용
     font.draw(600, 370, str(Upgrade2))#업그레이드2 횟수
 
-    font.draw(600,285,str((Upgrade3+1)*500))#업그레이드3 비용
+    font.draw(600,285,str((Upgrade3+1)*250))#업그레이드3 비용
     font.draw(600, 230, str(Upgrade3))#업그레이드3 횟수
 
-    font.draw(630,145,str((Upgrade4+1)*500))#업그레이드4 비용
+    font.draw(630,145,str((Upgrade4+1)*250))#업그레이드4 비용
     font.draw(630, 90, str(Upgrade4))#업그레이드4 횟수
 
     font.draw(1350,530,str(main_state.stageEnemy1[main_state.stage]))
