@@ -186,6 +186,7 @@ def update():
     for b in balls:
         if collide(Boys[0],b):
             balls.remove(b)
+            Boys[0].eat()
         if collide(grass,b):
             b.y=65
 

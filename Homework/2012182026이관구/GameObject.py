@@ -7,6 +7,9 @@ import game_framework
 class Grass:  # 풀은 간단하게 그리기 기능만 가지며 이미지를 가지고 있음
     image=None
     def __init__(self):
+        self.bgm=load_music('football.mp3')
+        self.bgm.set_volume(64)
+        self.bgm.repeat_play()
         if Grass.image==None:
             Grass.image =load_image('grass.png')
 
@@ -31,7 +34,7 @@ class boy:  # 소년은 위치와 이미지, 프레임을 가진다.
     LeftStand=2
     RightStand=3
     duration=2
-
+    eat_sound=None
     def __init__(self,i):
         self.x = random.randint(100, 700)
         self.y = random.randint(90, 200)
@@ -41,12 +44,16 @@ class boy:  # 소년은 위치와 이미지, 프레임을 가진다.
         self.num=i
         self.runframe=0
         self.standframe=0
+        if boy.eat_sound==None:
+            boy.eat_sound=load_wav('pickup.wav')
+            boy.eat_sound.set_volume(32)
         if boy.image==None:
             boy.image = load_image('animation_sheet.png')
 
     def get_bb(self):
         return self.x - 20, self.y - 40, self.x + 20, self.y +40
-
+    def eat(self):
+        self.eat_sound.play()
     def draw_bb(self):
         draw_rectangle(*self.get_bb())
 
