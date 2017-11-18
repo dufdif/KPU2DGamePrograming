@@ -1,4 +1,5 @@
 from pico2d import *
+
 import main_state
 import math
 import random
@@ -132,11 +133,11 @@ class Enemy1:
     fs=100#발사속도
     rg=270#사거리
     fireframe=0
-    BoundR=60
+    BoundR=50
     delobj=False
     dframe=-1#피가 0일때 폭팔이미지
     bomb = None
-
+    sound=None
     def __init__(self,i):
         self.dframe=-1
         self.wave=i
@@ -146,25 +147,30 @@ class Enemy1:
             Enemy1.image =load_image('Enemy12.png')
             Enemy1.bulletimg=load_image('EnemyBullet.png')
             Enemy1.bomb=load_image('bomb.png')
+            Enemy1.sound=load_wav('boom.wav')
+            Enemy1.sound.set_volume(35)
 
 
 
     def Draw(self):
+
         if self.hp>0:
-            self.image.clip_draw(150,265,130,100,self.x,self.y)
+            self.image.clip_draw(150,265,130,100,self.x,self.y-20,50,50)
         else:
-            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
+            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y,50,50)
 
     def Update(self):
         if self.AI()==True:#아무행동도 안했으면
             self.y-=self.sp#움직이게함
         if self.hp<0 and self.dframe<0:
+
             self.dframe=0
             #self.delobj=True
         if self.dframe>=7:
             self.delobj=True
         else:
             if self.hp<=0:
+                self.sound.play(1)
                 self.dframe+=1
 
 
@@ -208,10 +214,11 @@ class Enemy2:
     fs=300#발사속도
     rg=500#사거리
     fireframe=0
-    BoundR=60
+    BoundR=50
     delobj=False
     dframe=-1#피가 0일때 폭팔이미지
     bomb = None
+    sound=None
 
     def __init__(self,i):
         self.wave=i
@@ -221,12 +228,14 @@ class Enemy2:
             Enemy2.image =load_image('Enemy2.png')
             Enemy2.bulletimg=load_image('EnemyBullet.png')
             Enemy2.bomb=load_image('bomb.png')
+            Enemy2.sound = load_wav('boom.wav')
+            Enemy2.sound.set_volume(35)
 
     def Draw(self):
         if self.hp>0:
-            self.image.draw(self.x, self.y)
+            self.image.draw(self.x, self.y,60,80)
         else:
-            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
+            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y,80,80)
 
 
     def Update(self):
@@ -238,6 +247,7 @@ class Enemy2:
             self.delobj=True
         else:
             if self.hp<=0:
+                self.sound.play(1)
                 self.dframe+=1
 
 
@@ -291,12 +301,12 @@ class Enemy3:
     sp=4#속도
     fs=30
     rg=300#사거리
-    BoundR=45
+    BoundR=35
     fireframe=0
     delobj=False
     dframe=-1#피가 0일때 폭팔이미지
     bomb = None
-
+    sound=None
 
     def __init__(self,i):
         self.wave=i
@@ -307,10 +317,13 @@ class Enemy3:
             Enemy3.image =load_image('Enemy3.png')
             Enemy3.bulletimg=load_image('EnemyBullet.png')
             Enemy3.bomb=load_image('bomb.png')
+            Enemy3.sound = load_wav('boom.wav')
+            Enemy3.sound.set_volume(35)
+
 #8 71
     def Draw(self):
         if self.hp>0:
-            self.image.clip_draw(self.aframe*64+8,0,63,79,self.x, self.y + 40)
+            self.image.clip_draw(self.aframe*64+8,0,63,79,self.x, self.y + 20,)
         else:
             self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
 
@@ -327,6 +340,7 @@ class Enemy3:
             self.delobj=True
         else:
             if self.hp<=0:
+                self.sound.play(1)
                 self.dframe+=1
 
     def Attack(self,p):
@@ -390,11 +404,13 @@ class Unit1:
     sp=2.2#속도
     fs=100-(store_state.Upgrade4*(5))#발사속도
     rg=300#사거리
-    BoundR=60
+    BoundR=50
     fireframe=0
     delobj=False
     dframe=-1#피가 0일때 폭팔이미지
     bomb = None
+    sound1=None
+    sound=None
 
     def __init__(self,x,y):
         self.x=x
@@ -409,17 +425,23 @@ class Unit1:
             Unit1.image =load_image('Unit1.png')
             Unit1.bulletimg=load_image('EnemyBullet.png')
             Unit1.bomb=load_image('bomb.png')
+            Unit1.sound1=load_wav('laser2.wav')
+            Unit1.sound1.set_volume(40)
+            Unit1.sound = load_wav('boom.wav')
+            Unit1.sound.set_volume(25)
+
 
     def Draw(self):
         if self.hp>0:
-            self.image.draw(self.x, self.y + 40)
+            self.image.draw(self.x, self.y + 20,50,50)
         else:
-            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
+            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y,50,50)
 
     def Update(self):
         if self.AI() == True and self.y<=600:  # 아무행동도 안했으면
             self.y += self.sp  # 움직이게함
         if self.hp<0 and self.dframe<0:
+            self.sound.play(1)
             self.dframe=0
         if self.dframe>=7:
             self.delobj=True
@@ -429,6 +451,7 @@ class Unit1:
 
     def Attack(self,p):
         if self.fireframe==0:
+            self.sound1.play(1)
             main_state.playerbullet+=[bullet(self.bulletimg,8,p,main_state.Enemy,self.dm,self.x,self.y,10,85, 303, 25,25)]
 
             p.threat+=self.dm
@@ -487,7 +510,8 @@ class Unit2:
     delobj=False
     dframe=-1#피가 0일때 폭팔이미지
     bomb = None
-
+    sound1=None
+    sound=None
 
     def __init__(self,x,y):
         self.x=x
@@ -503,12 +527,16 @@ class Unit2:
             Unit2.image =load_image('Unit2.png')
             Unit2.bulletimg=load_image('EnemyBullet.png')
             Unit2.bomb=load_image('bomb.png')
+            Unit2.sound1=load_wav('laser1.wav')
+            Unit2.sound1.set_volume(20)
+            Unit2.sound = load_wav('boom.wav')
+            Unit2.sound.set_volume(25)
 
     def Draw(self):
         if self.hp>0:
-            self.image.clip_draw(self.aframe*80,0,80,101,self.x, self.y + 40)
+            self.image.clip_draw(self.aframe*80,0,80,101,self.x, self.y + 20,50,60)
         else:
-            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
+            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y,60,60)
 
     def Update(self):
         if self.AI() == True and self.y<=600:  # 아무행동도 안했으면
@@ -518,6 +546,7 @@ class Unit2:
         if self.aframe>=3:
             self.aframe=0
         if self.hp<0 and self.dframe<0:
+            self.sound.play(1)
             self.dframe=0
         if self.dframe>=7:
             self.delobj=True
@@ -527,6 +556,8 @@ class Unit2:
 
     def Attack(self,p):
         if self.fireframe==0:
+
+            self.sound1.play(1)
             main_state.playerbullet += [bullet(self.bulletimg, 8, p, main_state.Enemy, self.dm, self.x, self.y, 10, 400, 453, 25, 25,1)]
             p.threat+=self.dm
             self.fireframe+=1
@@ -581,11 +612,13 @@ class Unit3:
     sp=2#속도
     fs=20-(store_state.Upgrade4*(5))#발사속도
     rg=250#사거리
-    BoundR=130
+    BoundR=150
     fireframe=0
     delobj=False
     dframe=-1#피가 0일때 폭팔이미지
     bomb = None
+    sound1 = None
+    sound=None
 
     def __init__(self,x,y):
         self.x=x
@@ -603,19 +636,24 @@ class Unit3:
             Unit3.bulletimg=load_image('EnemyBullet.png')
             Unit3.bomb=load_image('bomb.png')
             Unit3.image2=load_image('Unit3_s.png')
+            Unit3.sound1=load_wav('laser4.wav')
+            Unit3.sound1.set_volume(20)
+            Unit3.sound = load_wav('boom.wav')
+            Unit3.sound.set_volume(25)
 
     def Draw(self):
         if self.hp>0:
-            self.image.draw(self.x, self.y + 50)
+            self.image.draw(self.x, self.y + 20,150,100)
             if self.curState==self.STATE[1]:
-                self.image2.draw(self.x,self.y+50)
+                self.image2.draw(self.x,self.y+20,150,100)
         else:
-            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
+            self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y,150,150)
 
     def Update(self):
         if self.AI() == True and self.y<=600:  # 아무행동도 안했으면
             self.y += self.sp  # 움직이게함
         if self.hp<0 and self.dframe<0:
+            self.sound.play(1)
             self.dframe=0
         if self.dframe>=7:
             self.delobj=True
@@ -625,6 +663,8 @@ class Unit3:
 
     def Attack(self,p):
         if self.fireframe==0:
+            self.sound1.play(1)
+
             main_state.playerbullet+=[bullet(self.bulletimg,8,p,main_state.Enemy,self.dm,self.x,self.y,10,85, 303, 25,25)]
 
             p.threat+=self.dm
@@ -673,9 +713,9 @@ class Boss1:
     threat=0
     image=None
     bulletimg=None
-    hp=2000#체력
-    df=0#방어력
-    dm=10#공격력
+    hp=3000#체력
+    df=2#방어력
+    dm=13#공격력
     sp=2#속도
     fs=30#발사속도
     bomb = None
@@ -789,11 +829,11 @@ class Boss2:
     threat=0
     image=None
     bulletimg=None
-    hp=6000#체력
-    df=2#방어력
+    hp=8000#체력
+    df=5#방어력
     dm=25#공격력
     sp=3#속도
-    fs=20#발사속도
+    fs=18#발사속도
     a=0
     bomb = None
     r=7
@@ -932,10 +972,11 @@ class Pilot:
     delobj=False
     frame=550
     dir=0
+    sound1=None
     dodge=False
     dTick=0
     bomb=None
-
+    sound2=None
     def __init__(self):
         self.hp = 150 + (store_state.Upgrade3 * (40))  # 체력
         self.df = 1 + (store_state.Upgrade2 * (3))  # 방어력
@@ -959,6 +1000,11 @@ class Pilot:
             Pilot.bomb = load_image('bomb.png')
             Pilot.bulletimg2=load_image('EnemyBullet2.png')
             Pilot.bulletimg3=load_image('bullet3.png')
+            Pilot.sound1=load_wav('laser2.wav')
+
+            Pilot.sound1.set_volume(65)
+            Pilot.sound2=load_wav('laser3.wav')
+            Pilot.sound2.set_volume(65)
 
     def Draw(self):
         if self.hp>0:
@@ -1042,12 +1088,15 @@ class Pilot:
 
     def Attack(self,p):
         if self.fireframe==0:
+            self.sound1.play(1)
 
             main_state.playerbullet+=[bullet(self.bulletimg,16,p,main_state.Enemy,self.dm,self.x,self.y,10,85, 303, 25,25)]
             if self.pattern1>0:
+
                 if len(main_state.Enemy)>0:
                     main_state.playerbullet += [bullet(self.bulletimg2, 16, main_state.Enemy[0], main_state.Enemy, self.dm/3, self.x, self.y, 10, 0, 0, 39,40,1)]
             if self.pattern2>0:
+                self.sound1.play(1)
                 if len(main_state.Enemy)>0:
                     main_state.playerbullet += [bullet(self.bulletimg, 13,[-1,4], main_state.Enemy, self.dm/5, self.x, self.y, 20,85, 303, 25,25,2)]
                     main_state.playerbullet += [bullet(self.bulletimg, 13,[1,4], main_state.Enemy, self.dm/5, self.x, self.y, 20,85, 303, 25,25,2)]
@@ -1055,6 +1104,7 @@ class Pilot:
                     main_state.playerbullet += [bullet(self.bulletimg, 13,[-2,3], main_state.Enemy, self.dm/5, self.x, self.y, 20,85, 303, 25,25,2)]
 
             if self.pattern3>0:
+                self.sound2.play(1)
                 if len(main_state.Enemy)>0 and  random.randint(0,8)==2 :
                     main_state.playerbullet += [
                         bullet(self.bulletimg3, 25, p, main_state.Enemy, self.dm * 3, self.x, self.y, 50, 0, 0, 102,

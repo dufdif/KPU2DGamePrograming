@@ -18,4 +18,5 @@ import start_state
 # handleevents 또한 게임의 꽃으로 사용자가 게임세상과 소통하도록 하는 녀석이다. 예를들어 시작 상태의 경우 스페이스바를 눌러서
 # 게임을 진행하거나 esc를 눌러서 종료할수 있도록한다.
 
+
 game_framework.run(start_state)

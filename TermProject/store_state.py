@@ -18,6 +18,8 @@ pUpgrade2=0
 pUpgrade3=0
 pUpgrade4=0
 
+bt=[]
+
 def enter():
     show_cursor()
     global image
@@ -26,6 +28,8 @@ def enter():
     font = load_font('NANUMBARUNGOTHICBOLD.TTF',40)
     global gold
     gold += 1000 + main_state.stage*1000
+    global bt
+    bt=[0,0,0,0,0,0,0,0,0,0]
 
 def exit():
     global image
@@ -46,6 +50,7 @@ def handle_events():
     global pUpgrade2
     global pUpgrade3
     global pUpgrade4
+    global bt
 
     events = get_events()
     for event in events:
@@ -56,14 +61,17 @@ def handle_events():
                 if gold>=100:
                     main_state.numUnit1+=1
                     gold-=100
+                    bt[0]=1
             elif event.x>=60 and event.x<350 and event.y >= 350 and event.y<425:#  유닛2 생성
                 if gold>=150:
                     main_state.numUnit2+=1
                     gold-=150
+                    bt[1] = 1
             elif event.x>=60 and event.x<350 and event.y >= 475 and event.y<540:#  유닛3 생성
                 if gold>=400:
                     main_state.numUnit3+=1
                     gold-=400
+                    bt[2] = 1
 
 
 
@@ -71,33 +79,44 @@ def handle_events():
                 if gold>=250*(Upgrade1+1):
                     gold-=250*(Upgrade1+1)
                     Upgrade1+=1
+                    bt[3] = 1
             elif event.x>=435 and event.x<620 and event.y >= 365 and event.y<450:#  업그레이드 2
                 if gold>=250*(Upgrade2+1):
                     gold-=250*(Upgrade2+1)
                     Upgrade2+=1
+                    bt[4] = 1
             elif event.x>=435 and event.x<620 and event.y >= 405 and event.y<590:#  업그레이드 3
                 if gold>=250*(Upgrade3+1):
                     gold-=250*(Upgrade3+1)
                     Upgrade3+=1
+                    bt[5] = 1
             elif event.x>=435 and event.x<620 and event.y >= 445 and event.y<730:#  업그레이드 4
                 if gold>=250*(Upgrade4+1):
                     gold-=250*(Upgrade4+1)
                     Upgrade4+=1
+                    bt[6] = 1
 
             elif event.x>=825 and event.x<1100 and event.y >= 240 and event.y<310:#  파일럿업그레이드 1
                 if gold>=1000 and pUpgrade1==0:
                     gold-=1000
                     pUpgrade1+=1
+                    bt[7] = 1
 
             elif event.x>=825 and event.x<1100 and event.y >= 370 and event.y<440:#  파일럿업그레이드 2
                 if gold>=1500 and pUpgrade2==0:
                     gold-=1500
                     pUpgrade2+=1
+                    bt[8] = 1
 
             elif event.x>=825 and event.x<1100 and event.y >= 500 and event.y<570:#  파일럿업그레이드 3
                 if gold>=1500 and pUpgrade3==0:
                     gold-=1500
                     pUpgrade3+=1
+                    bt[9] = 1
+
+        elif event.type == SDL_MOUSEBUTTONUP:
+            for i in range(10):
+                bt[i]=0
 
 
 def draw():
@@ -108,10 +127,35 @@ def draw():
     global Upgrade2
     global Upgrade3
     global Upgrade4
-
+    global bt
     clear_canvas()
     image.draw(750,400)
     font.draw(1100,740,str(gold))#골드
+
+    if bt[0]==1:
+        draw_rectangle(130, 475, 300, 575)#유닛 관련
+    if bt[1] == 1:
+        draw_rectangle(130, 365, 300, 465)
+    if bt[2] == 1:
+        draw_rectangle(130, 255, 300, 355)
+
+    if bt[3] == 1:
+        draw_rectangle(370,485,700,595)# 업그레이드1 관련
+    if bt[4] == 1:
+        draw_rectangle(370, 345, 700, 455)
+
+    if bt[5] == 1:
+        draw_rectangle(370, 205, 700, 315)
+    if bt[6] == 1:
+        draw_rectangle(370, 65, 700, 175)
+
+    if bt[7] == 1:
+        draw_rectangle(820, 475, 1140, 575)
+    if bt[8] == 1:
+        draw_rectangle(820, 345, 1140, 445)
+    if bt[9] == 1:
+        draw_rectangle(820, 215, 1140, 315)
+
     font.draw(250,500,str(main_state.numUnit1))#유닛 1 갯수
     font.draw(250,385,str(main_state.numUnit2))#유닛 2 갯수
     font.draw(250,270,str(main_state.numUnit3))#유닛 3 갯수

@@ -7,7 +7,9 @@ image = None
 logo_time = 0.0
 def enter():
     global image
-    open_canvas(1600,800)
+    p=open_canvas(1600,800)
+
+    SDL_GetWindowTitle
     image = load_image('kpu_credit.png')
 
 def exit():

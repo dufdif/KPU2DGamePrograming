@@ -25,9 +25,9 @@ bgy2=0
 
 stageClear=False
 stage = 1
-stageEnemy1={1:10,2:20,3:25,4:25}#스테이지별 적1 의 갯수
-stageEnemy2={1:0,2:5,3:10,4:10}#스테이지별 적2의 갯수
-stageEnemy3={1:3,2:0,3:5,4:0}#스테이지별 적2의 갯수
+stageEnemy1={1:15,2:25,3:35,4:40}#스테이지별 적1 의 갯수
+stageEnemy2={1:7,2:15,3:10,4:20}#스테이지별 적2의 갯수
+stageEnemy3={1:3,2:3,3:8,4:5}#스테이지별 적2의 갯수
 
 type=None
 # 유닛별로 재고가 있음. 이 재고를 다떨어지면 생성불가.
@@ -158,19 +158,30 @@ def CreateStage():
     playerbullet.clear()
 
     if stage == 1:
-        Enemy+=[Enemy1(3) for i in range(5)]
+        Enemy+=[Enemy1(1) for i in range(8)]
         Enemy += [Enemy1(2) for i in range(5)]
-        Enemy += [Enemy3(1) for i in range(2)]
+        Enemy += [Enemy2(2) for i in range(3)]
+
+
+
+        Enemy += [Enemy1(5) for i in range(2)]
+        Enemy += [Enemy2(4) for i in range(2)]
+        Enemy += [Enemy2(5) for i in range(2)]
+
+        Enemy += [Enemy3(10) for i in range(3)]
+
     elif stage ==2:
         player+=[Pilot()]
         Enemy+=[Boss1()]
     elif stage == 3:
-        Enemy += [Enemy1(1) for i in range(10)]
-        Enemy += [Enemy1(2) for i in range(10)]
-        Enemy += [Enemy2(2) for i in range(10)]
+        Enemy += [Enemy1(1) for i in range(15)]
+        Enemy += [Enemy3(2) for i in range(3)]
 
-        Enemy += [Enemy1(3) for i in range(15)]
-        Enemy += [Enemy3(6) for i in range(5)]
+        Enemy += [Enemy1(4) for i in range(5)]
+        Enemy += [Enemy2(4) for i in range(10)]
+
+        Enemy += [Enemy1(8) for i in range(15)]
+        Enemy += [Enemy3(8) for i in range(5)]
     elif stage ==4:
         player+=[Pilot()]
         Enemy+=[Boss2()]
@@ -221,6 +232,8 @@ def exit():
     global Bg2
     del Bg
     del Bg2
+
+
 def DelObject():#지워야 할 오브젝트를 지우는 녀석.
     global Enemy
     global player

@@ -4,9 +4,16 @@ import main_state
 import store_state
 name = "TitleState"
 image = None
+bgm=None
 def enter():
     global image
-    image = load_image('title.png')
+    global bgm
+    image = load_image('background.jpg')
+    bgm=load_music('bgm.mp3')
+    bgm.set_volume(55)
+    bgm.repeat_play()
+
+
 
 def exit():
     global image
@@ -27,7 +34,7 @@ def handle_events():
 def draw():
     global image
     clear_canvas()
-    image.draw(400,300)
+    image.draw(770,450,1600,900)
     update_canvas()
 
 
