@@ -27,7 +27,7 @@ def enter():
     image = load_image('storebg.png')
     font = load_font('NANUMBARUNGOTHICBOLD.TTF',40)
     global gold
-    gold += 1000 + main_state.stage*1000
+    gold += 1500 + main_state.stage*1000
     global bt
     bt=[0,0,0,0,0,0,0,0,0,0]
 

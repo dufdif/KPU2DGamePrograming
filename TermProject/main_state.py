@@ -24,7 +24,7 @@ bgy=0
 bgy2=0
 
 stageClear=False
-stage = 1
+stage = 4
 stageEnemy1={1:15,2:25,3:35,4:40}#스테이지별 적1 의 갯수
 stageEnemy2={1:7,2:15,3:10,4:20}#스테이지별 적2의 갯수
 stageEnemy3={1:3,2:3,3:8,4:5}#스테이지별 적2의 갯수
@@ -158,17 +158,17 @@ def CreateStage():
     playerbullet.clear()
 
     if stage == 1:
-        Enemy+=[Enemy1(1) for i in range(8)]
+        Enemy+=[Enemy1(1) for i in range(3)]
         Enemy += [Enemy1(2) for i in range(5)]
-        Enemy += [Enemy2(2) for i in range(3)]
+        Enemy += [Enemy2(2) for i in range(2)]
 
 
 
         Enemy += [Enemy1(5) for i in range(2)]
         Enemy += [Enemy2(4) for i in range(2)]
-        Enemy += [Enemy2(5) for i in range(2)]
+        Enemy += [Enemy2(5) for i in range(1)]
 
-        Enemy += [Enemy3(10) for i in range(3)]
+        Enemy += [Enemy3(1) for i in range(3)]
 
     elif stage ==2:
         player+=[Pilot()]
@@ -177,7 +177,7 @@ def CreateStage():
         Enemy += [Enemy1(1) for i in range(15)]
         Enemy += [Enemy3(2) for i in range(3)]
 
-        Enemy += [Enemy1(4) for i in range(5)]
+        Enemy += [Enemy1(4) for i in range(7)]
         Enemy += [Enemy2(4) for i in range(10)]
 
         Enemy += [Enemy1(8) for i in range(15)]

@@ -7,6 +7,7 @@ import store_state
 #   ----    모든 게임 오브젝트를 여기서 설계  ----
 
 
+
 class bullet:
     img=None
     sp=None
@@ -110,7 +111,7 @@ class bullet:
             else:
                 if l <= self.BoundR+p.BoundR:
                     d=(self.dm-p.df)
-                    if d<=0:
+                    if d<=1:
                         d=1
                     p.hp-=d
                     self.delobj=True
@@ -127,6 +128,7 @@ class Enemy1:
     bulletimg=None
     wave=0
     hp=160#체력
+    maxhp=hp
     df=0#방어력
     dm=10#공격력
     sp=2.2#속도
@@ -138,9 +140,12 @@ class Enemy1:
     dframe=-1#피가 0일때 폭팔이미지
     bomb = None
     sound=None
+    hpbar=None
     def __init__(self,i):
         self.dframe=-1
         self.wave=i
+        self.hp=160.1+20*main_state.stage
+        self.maxhp=self.hp
         self.x=800+random.randint(-450,450)
         self.y=600+random.randint(-50,55)+self.wave*400
         if Enemy1.image==None:
@@ -149,11 +154,11 @@ class Enemy1:
             Enemy1.bomb=load_image('bomb.png')
             Enemy1.sound=load_wav('boom.wav')
             Enemy1.sound.set_volume(35)
-
-
+            Enemy1.hpbar = load_image('hpbar.png')
 
     def Draw(self):
 
+        self.hpbar.draw(self.x,self.y+15,30*self.hp/self.maxhp,30)
         if self.hp>0:
             self.image.clip_draw(150,265,130,100,self.x,self.y-20,50,50)
         else:
@@ -207,9 +212,10 @@ class Enemy2:
     image=None
     bulletimg=None
     wave=0
-    hp=100#체력
-    df=0#방어력
-    dm=30#공격력
+    hp=120#체력
+    maxhp=hp
+    df=1#방어력
+    dm=50#공격력
     sp=1.5#속도
     fs=300#발사속도
     rg=500#사거리
@@ -219,7 +225,7 @@ class Enemy2:
     dframe=-1#피가 0일때 폭팔이미지
     bomb = None
     sound=None
-
+    hpbar=None
     def __init__(self,i):
         self.wave=i
         self.x=800+random.randint(-450,450)
@@ -230,8 +236,9 @@ class Enemy2:
             Enemy2.bomb=load_image('bomb.png')
             Enemy2.sound = load_wav('boom.wav')
             Enemy2.sound.set_volume(35)
-
+            Enemy2.hpbar=load_image('hpbar.png')
     def Draw(self):
+        self.hpbar.draw(self.x, self.y + 45, 30 * self.hp / self.maxhp, 30)
         if self.hp>0:
             self.image.draw(self.x, self.y,60,80)
         else:
@@ -295,9 +302,10 @@ class Enemy3:
     d=0
     image=None
     bulletimg=None
-    hp=120
-    df=10
-    dm=8
+    hp=170
+    maxhp=hp
+    df=7
+    dm=6
     sp=4#속도
     fs=30
     rg=300#사거리
@@ -307,6 +315,7 @@ class Enemy3:
     dframe=-1#피가 0일때 폭팔이미지
     bomb = None
     sound=None
+    hpbar=None
 
     def __init__(self,i):
         self.wave=i
@@ -319,9 +328,11 @@ class Enemy3:
             Enemy3.bomb=load_image('bomb.png')
             Enemy3.sound = load_wav('boom.wav')
             Enemy3.sound.set_volume(35)
+            Enemy3.hpbar=load_image('hpbar.png')
 
 #8 71
     def Draw(self):
+        self.hpbar.draw(self.x, self.y + 60, 30 * self.hp / self.maxhp, 30)
         if self.hp>0:
             self.image.clip_draw(self.aframe*64+8,0,63,79,self.x, self.y + 20,)
         else:
@@ -400,10 +411,10 @@ class Unit1:
     bulletimg=None
     hp=200+(store_state.Upgrade3*(25))#체력
     df=1+(store_state.Upgrade2*(1))#방어력
-    dm=9+(store_state.Upgrade1*(3))#공격력
+    dm=10+(store_state.Upgrade1*(4))#공격력
     sp=2.2#속도
     fs=100-(store_state.Upgrade4*(5))#발사속도
-    rg=300#사거리
+    rg=310#사거리
     BoundR=50
     fireframe=0
     delobj=False
@@ -411,16 +422,17 @@ class Unit1:
     bomb = None
     sound1=None
     sound=None
-
+    maxhp=hp
+    hpbar=None
     def __init__(self,x,y):
         self.x=x
         self.y=y
-        self.hp = 200 + (store_state.Upgrade3 * (25))  # 체력
-        self.df = 1 + (store_state.Upgrade2 * (1))  # 방어력
-        self.dm = 9 + (store_state.Upgrade1 * (3))  # 공격력
+        self.hp = 200 + (store_state.Upgrade3 * (35))  # 체력
+        self.df = 1 + (store_state.Upgrade2 * (2))  # 방어력
+        self.dm = 10 + (store_state.Upgrade1 * (4))  # 공격력
         self.sp = 2.2  # 속도
-        self.fs = 100 - (store_state.Upgrade4 * (5))  # 발사속도
-
+        self.fs = 90 - (store_state.Upgrade4 * (5))  # 발사속도
+        self.maxhp=self.hp
         if Unit1.image==None:
             Unit1.image =load_image('Unit1.png')
             Unit1.bulletimg=load_image('EnemyBullet.png')
@@ -429,9 +441,11 @@ class Unit1:
             Unit1.sound1.set_volume(40)
             Unit1.sound = load_wav('boom.wav')
             Unit1.sound.set_volume(25)
+            Unit1.hpbar=load_image('hpbar.png')
 
 
     def Draw(self):
+        self.hpbar.draw(self.x, self.y + 50, 30 * self.hp / self.maxhp, 30)
         if self.hp>0:
             self.image.draw(self.x, self.y + 20,50,50)
         else:
@@ -499,7 +513,7 @@ class Unit2:
     d=0
     image=None
     bulletimg=None
-    hp=100+(store_state.Upgrade3*(25))#체력
+    hp=80+(store_state.Upgrade3*(25))#체력
     df=0+(store_state.Upgrade2*(1))#방어력
     dm=60+(store_state.Upgrade1*(30))#공격력
     sp=1#속도
@@ -512,16 +526,18 @@ class Unit2:
     bomb = None
     sound1=None
     sound=None
+    maxhp=hp
+    hpbar=None
 
     def __init__(self,x,y):
         self.x=x
         self.y=y
-        self.hp = 100 + (store_state.Upgrade3 * (25))  # 체력
+        self.hp = 80 + (store_state.Upgrade3 * (25))  # 체력
         self.df = 0 + (store_state.Upgrade2 * (1))  # 방어력
         self.dm = 60 + (store_state.Upgrade1 * (30))  # 공격력
         self.sp = 1  # 속도
         self.fs = 200 - (store_state.Upgrade4 * (1))  # 발사속도
-
+        self.maxhp=self.hp
         self.aframe=0
         if Unit2.image==None:
             Unit2.image =load_image('Unit2.png')
@@ -531,8 +547,9 @@ class Unit2:
             Unit2.sound1.set_volume(20)
             Unit2.sound = load_wav('boom.wav')
             Unit2.sound.set_volume(25)
-
+            Unit2.hpbar=load_image('hpbar.png')
     def Draw(self):
+        self.hpbar.draw(self.x, self.y + 55, 30 * self.hp / self.maxhp, 30)
         if self.hp>0:
             self.image.clip_draw(self.aframe*80,0,80,101,self.x, self.y + 20,50,60)
         else:
@@ -606,11 +623,11 @@ class Unit3:
     image=None
     image2=None
     bulletimg=None
-    hp=700+(store_state.Upgrade3*(25))#체력
-    df=3+(store_state.Upgrade2*(5))#방어력
-    dm=1.5+(store_state.Upgrade1*(1))#공격력
+    hp=900+(store_state.Upgrade3*(100))#체력
+    df=5+(store_state.Upgrade2*(5))#방어력
+    dm=2+(store_state.Upgrade1*(1))#공격력
     sp=2#속도
-    fs=20-(store_state.Upgrade4*(5))#발사속도
+    fs=10#발사속도
     rg=250#사거리
     BoundR=150
     fireframe=0
@@ -619,17 +636,17 @@ class Unit3:
     bomb = None
     sound1 = None
     sound=None
+    maxhp=hp
+    hpbar=None
 
     def __init__(self,x,y):
         self.x=x
         self.y=y
-        self.hp = 700 + (store_state.Upgrade3 * (25))  # 체력
-        self.df = 3 + (store_state.Upgrade2 * (5))  # 방어력
-        self.dm = 1.5 + (store_state.Upgrade1 * (1))  # 공격력
-        self.sp = 2  # 속도
-        self.fs = 20 - (store_state.Upgrade4 * (5))  # 발사속도
-
+        self.hp = 900 + (store_state.Upgrade3 * (100))  # 체력
+        self.df = 5 + (store_state.Upgrade2 * (5))  # 방어력
+        self.dm = 2 + (store_state.Upgrade1 * (1))  # 공격력
         self.tdf=self.df
+        self.maxhp=self.hp
 
         if Unit3.image==None:
             Unit3.image =load_image('Unit3.png')
@@ -640,8 +657,10 @@ class Unit3:
             Unit3.sound1.set_volume(20)
             Unit3.sound = load_wav('boom.wav')
             Unit3.sound.set_volume(25)
+            Unit3.hpbar=load_image('hpbar.png')
 
     def Draw(self):
+        self.hpbar.draw(self.x, self.y + 85, 100 * self.hp / self.maxhp, 30)
         if self.hp>0:
             self.image.draw(self.x, self.y + 20,150,100)
             if self.curState==self.STATE[1]:
@@ -719,7 +738,8 @@ class Boss1:
     sp=2#속도
     fs=30#발사속도
     bomb = None
-
+    maxhp=hp
+    hpbar=None
     fireframe=0
     BoundR=60
     delobj=False
@@ -727,13 +747,16 @@ class Boss1:
         self.dframe=-1
         self.x=800
         self.y=1000
+
         if Boss1.image==None:
             Boss1.image =load_image('boss1_p1.png')
             Boss1.bulletimg=load_image('EnemyBullet.png')
             Boss1.bomb=load_image('bomb.png')
+            Boss1.hpbar=load_image('hpbar.png')
 
 
     def Draw(self):
+        self.hpbar.draw(self.x, self.y + 165, 130 * self.hp / self.maxhp, 30)
         if self.hp>0:
             self.image.draw(self.x, self.y)
         else:
@@ -839,6 +862,8 @@ class Boss2:
     r=7
     fireframe=0
     BoundR=60
+    maxhp=hp
+    hpbar=None
     delobj=False
     def __init__(self):
         self.dframe=-1
@@ -848,17 +873,27 @@ class Boss2:
             Boss2.image =load_image('boss2_1.png')
             Boss2.bulletimg=load_image('EnemyBullet.png')
             Boss2.bomb=load_image('bomb.png')
+            Boss2.hpbar=load_image('hpbar.png')
 
 
     def Draw(self):
+
         if self.hp>0:
             self.image.draw(self.x, self.y)
+
         else:
             self.bomb.clip_draw(self.dframe*95,0,95,70,self.x,self.y)
+
+        if self.phase==1:
+            self.hpbar.draw(self.x, self.y - 220, 160 * self.hp / self.maxhp, 30)
+        else:
+            self.hpbar.draw(self.x, self.y - 120, 160 * self.hp / self.maxhp, 30)
 
         if self.phase==2:
             self.bomb.clip_draw(self.dframe*95,0,95,70,self.x-20,self.y)
             self.bomb.clip_draw(self.dframe*95,0,95,70,self.x+20,self.y)
+
+
 
 
 
@@ -963,6 +998,8 @@ class Pilot:
     bulletimg3=None
     threat=0
     hp=150+(store_state.Upgrade3*(50))#체력
+    maxhp=hp
+    hpbar=None
     df=1+(store_state.Upgrade2*(3))#방어력
     dm=25+(store_state.Upgrade1*(1000))#공격력
     sp=6#속도
@@ -984,7 +1021,7 @@ class Pilot:
         self.sp = 6  # 속도
         self.fs = 10  # 발사속도
         self.BoundR = 17
-
+        self.maxhp=self.hp
         self.aframe=0;
         self.dframe=-1
         self.x=800
@@ -1005,8 +1042,10 @@ class Pilot:
             Pilot.sound1.set_volume(65)
             Pilot.sound2=load_wav('laser3.wav')
             Pilot.sound2.set_volume(65)
+            Pilot.hpbar=load_image('hpbar.png')
 
     def Draw(self):
+        self.hpbar.draw(self.x-3, self.y + 75, 30 * self.hp / self.maxhp, 30)
         if self.hp>0:
             self.image.clip_draw(self.frame,0,48,52,self.x,self.y+40)
 
