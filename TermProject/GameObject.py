@@ -281,7 +281,7 @@ class Enemy2:
                     if l<=self.rg:
                         self.Attack(p)
                         ai=False
-                if self.threat > 40:  # 만약 어느정도 위험하다 생각되면
+                if self.threat > 130:  # 만약 어느정도 위험하다 생각되면
                     self.curState=self.STATE[1]
                     d=1
 
@@ -424,6 +424,7 @@ class Unit1:
     sound=None
     maxhp=hp
     hpbar=None
+    powershot=True
     def __init__(self,x,y):
         self.x=x
         self.y=y
@@ -467,6 +468,11 @@ class Unit1:
         if self.fireframe==0:
             self.sound1.play(1)
             main_state.playerbullet+=[bullet(self.bulletimg,8,p,main_state.Enemy,self.dm,self.x,self.y,10,85, 303, 25,25)]
+            if self.powershot==True:
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 16, [-2,2], main_state.Enemy, self.dm, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 16, [2,2], main_state.Enemy, self.dm, self.x, self.y, 10, 85, 303, 25, 25)]
 
             p.threat+=self.dm
             self.fireframe+=1
@@ -528,7 +534,7 @@ class Unit2:
     sound=None
     maxhp=hp
     hpbar=None
-
+    powershot=True
     def __init__(self,x,y):
         self.x=x
         self.y=y
@@ -576,6 +582,10 @@ class Unit2:
 
             self.sound1.play(1)
             main_state.playerbullet += [bullet(self.bulletimg, 8, p, main_state.Enemy, self.dm, self.x, self.y, 10, 400, 453, 25, 25,1)]
+            if self.powershot == True:
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [0, 10], main_state.Enemy, self.dm*2, self.x, self.y, 10, 145, 330, 25, 25)]
+
             p.threat+=self.dm
             self.fireframe+=1
         elif self.fireframe <self.fs:
@@ -627,8 +637,8 @@ class Unit3:
     df=5+(store_state.Upgrade2*(5))#방어력
     dm=2+(store_state.Upgrade1*(1))#공격력
     sp=2#속도
-    fs=10#발사속도
-    rg=250#사거리
+    fs=50#발사속도
+    rg=200#사거리
     BoundR=150
     fireframe=0
     delobj=False
@@ -638,6 +648,7 @@ class Unit3:
     sound=None
     maxhp=hp
     hpbar=None
+    powershot=True
 
     def __init__(self,x,y):
         self.x=x
@@ -685,6 +696,35 @@ class Unit3:
             self.sound1.play(1)
 
             main_state.playerbullet+=[bullet(self.bulletimg,8,p,main_state.Enemy,self.dm,self.x,self.y,10,85, 303, 25,25)]
+            if self.powershot==True:
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [-2, 6], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [2, 6], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [-4, 4], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [4, 4], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [-6, 2], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [6, 2], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [-6, 0], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [6, 0], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [-4, -2], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [4, -2], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [-2, -4], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [2, -4], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [-4, -4], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                main_state.playerbullet += [
+                    bullet(self.bulletimg, 8, [-4, -4], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
 
             p.threat+=self.dm
             self.fireframe+=1

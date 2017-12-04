@@ -20,11 +20,15 @@ Enemybullet=None
 Bg=None
 Bg2=None
 
+ui1 =None
+ui2 =None
+ui3 =None
+
 bgy=0
 bgy2=0
 
 stageClear=False
-stage = 4
+stage = 1
 stageEnemy1={1:15,2:25,3:35,4:40}#스테이지별 적1 의 갯수
 stageEnemy2={1:7,2:15,3:10,4:20}#스테이지별 적2의 갯수
 stageEnemy3={1:3,2:3,3:8,4:5}#스테이지별 적2의 갯수
@@ -38,7 +42,8 @@ numUnit3=0
 xKey=[]
 yKey=[]
 
-
+mousex=0
+mousey=0
 
 def handle_events():  # F1~5까지 누르면 유닛선택
     events = get_events()
@@ -50,15 +55,18 @@ def handle_events():  # F1~5까지 누르면 유닛선택
     global numUnit3
     global xKey
     global yKey
-
+    global mousex
+    global mousey
     if stage%2 == 1:
         for event in events:
+
             if event.type == SDL_KEYDOWN:
                 if event.key == SDLK_ESCAPE:
                     game_framework.quit()
                 elif event.key==SDLK_F1:
                     if type != 1:
                         type=1
+
                     else:
                         type=None
                 elif event.key==SDLK_F2:
@@ -71,6 +79,10 @@ def handle_events():  # F1~5까지 누르면 유닛선택
                         type = 3
                     else:
                         type = None
+
+            elif event.type == SDL_MOUSEMOTION:
+                mousex = event.x
+                mousey = 800 - event.y
 
 
 
@@ -96,6 +108,8 @@ def handle_events():  # F1~5까지 누르면 유닛선택
                             maxY=200
                         player+=[Unit3(event.x,maxY)]
                         numUnit3-=1
+
+
     else:
         hide_cursor()
         if len(player)>0:
@@ -201,6 +215,13 @@ def enter():
     global Bg
     global Bg2
     global bgy
+    global ui1
+    global ui2
+    global ui3
+
+    ui1=load_image('Unit1.png')
+    ui2=load_image('Unit2.png')
+    ui3=load_image('Unit3.png')
     bgy=0
 
     Bg=load_image('bg.jpg')
@@ -345,6 +366,13 @@ def draw():#여기서 모든 객체를 그리고 모든 폰트를 그린다. 매
     global Bg
     global Bg2
     global bgy
+    global ui1
+    global ui2
+    global ui3
+    global Font
+    global mousex
+    global mousey
+    global type
 
     Bg.draw(800,400+bgy)
     Bg2.draw(800,6820+bgy)
@@ -360,6 +388,25 @@ def draw():#여기서 모든 객체를 그리고 모든 폰트를 그린다. 매
 
     for pb in playerbullet:
         pb.Draw()
+
+
+    if stage%2==1:
+
+        if type==1:
+            ui1.draw(mousex,mousey,20,20)
+        elif type==2:
+            ui2.clip_draw(0,0,80,101,mousex,mousey,20,20)
+        elif type==3:
+            ui3.draw(mousex,mousey,20,20)
+
+
+        ui1.draw(50,100,40,40)
+
+        Font.draw(50,50,str(numUnit1),color=[255,255,255])
+        ui2.clip_draw(0,0,80,101,90,100,40,40)
+        Font.draw(90, 50, str(numUnit2), color=[255, 255, 255])
+        ui3.draw(130, 100, 40, 40)
+        Font.draw(130, 50, str(numUnit3), color=[255, 255, 255])
 
     update_canvas()
     delay(0.025)
