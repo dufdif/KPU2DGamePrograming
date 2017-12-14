@@ -44,7 +44,7 @@ yKey=[]
 
 mousex=0
 mousey=0
-
+godmode=False
 def handle_events():  # F1~5까지 누르면 유닛선택
     events = get_events()
     global player
@@ -57,6 +57,7 @@ def handle_events():  # F1~5까지 누르면 유닛선택
     global yKey
     global mousex
     global mousey
+    global godmode
     if stage%2 == 1:
         for event in events:
 
@@ -79,6 +80,8 @@ def handle_events():  # F1~5까지 누르면 유닛선택
                         type = 3
                     else:
                         type = None
+                elif event.key == SDLK_F9:
+                    godmode=True
 
             elif event.type == SDL_MOUSEMOTION:
                 mousex = event.x

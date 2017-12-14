@@ -144,7 +144,9 @@ class Enemy1:
     def __init__(self,i):
         self.dframe=-1
         self.wave=i
-        self.hp=160.1+20*main_state.stage
+        self.hp=160.1+25*main_state.stage
+        self.dm = 10 + 2 * main_state.stage
+
         self.maxhp=self.hp
         self.x=800+random.randint(-450,450)
         self.y=600+random.randint(-50,55)+self.wave*400
@@ -227,6 +229,10 @@ class Enemy2:
     sound=None
     hpbar=None
     def __init__(self,i):
+        self.hp = 120 + main_state.stage * 30
+        self.maxhp = self.hp
+        self.df = 7 + main_state.stage * 1
+        self.dm = 50 + main_state.stage * 10
         self.wave=i
         self.x=800+random.randint(-450,450)
         self.y=600+random.randint(-50,55)+self.wave*400
@@ -318,6 +324,10 @@ class Enemy3:
     hpbar=None
 
     def __init__(self,i):
+        self.hp = 170 + main_state.stage*30
+        self.maxhp = self.hp
+        self.df = 7+ main_state.stage*1
+        self.dm = 6 + main_state.stage*2
         self.wave=i
         self.x=800+random.randint(-450,450)
         self.y=600+random.randint(-50,55)+self.wave*300
@@ -463,12 +473,18 @@ class Unit1:
         else:
             if self.hp<=0:
                 self.dframe+=1
+        self.powershot=False
+        a=random.randint(0,5)
+        if a==1:
+            self.powershot=True
+
 
     def Attack(self,p):
         if self.fireframe==0:
             self.sound1.play(1)
             main_state.playerbullet+=[bullet(self.bulletimg,8,p,main_state.Enemy,self.dm,self.x,self.y,10,85, 303, 25,25)]
             if self.powershot==True:
+                self.powershot=False
                 main_state.playerbullet += [
                     bullet(self.bulletimg, 16, [-2,2], main_state.Enemy, self.dm, self.x, self.y, 10, 85, 303, 25, 25)]
                 main_state.playerbullet += [
@@ -534,7 +550,7 @@ class Unit2:
     sound=None
     maxhp=hp
     hpbar=None
-    powershot=True
+    powershot=False
     def __init__(self,x,y):
         self.x=x
         self.y=y
@@ -577,14 +593,25 @@ class Unit2:
             if self.hp<=0:
                 self.dframe+=1
 
+        self.powershot = False
+        a = random.randint(0, 3)
+        if a == 1:
+            self.powershot = True
+
     def Attack(self,p):
+        if main_state.godmode == True:
+            self.dm = 500
+            self.hp = 150
+
         if self.fireframe==0:
 
             self.sound1.play(1)
             main_state.playerbullet += [bullet(self.bulletimg, 8, p, main_state.Enemy, self.dm, self.x, self.y, 10, 400, 453, 25, 25,1)]
             if self.powershot == True:
+                self.powershot=False
                 main_state.playerbullet += [
                     bullet(self.bulletimg, 8, [0, 10], main_state.Enemy, self.dm*2, self.x, self.y, 10, 145, 330, 25, 25)]
+
 
             p.threat+=self.dm
             self.fireframe+=1
@@ -655,7 +682,7 @@ class Unit3:
         self.y=y
         self.hp = 900 + (store_state.Upgrade3 * (100))  # 체력
         self.df = 5 + (store_state.Upgrade2 * (5))  # 방어력
-        self.dm = 2 + (store_state.Upgrade1 * (1))  # 공격력
+        self.dm = 3 + (store_state.Upgrade1 * (1))  # 공격력
         self.tdf=self.df
         self.maxhp=self.hp
 
@@ -691,24 +718,34 @@ class Unit3:
             if self.hp<=0:
                 self.dframe+=1
 
+        self.powershot = False
+        a = random.randint(0, 1)
+        if a == 1:
+            self.powershot = True
+
     def Attack(self,p):
+        if main_state.godmode == True:
+            self.dm = 500
+            self.hp = 500
+
         if self.fireframe==0:
             self.sound1.play(1)
 
             main_state.playerbullet+=[bullet(self.bulletimg,8,p,main_state.Enemy,self.dm,self.x,self.y,10,85, 303, 25,25)]
             if self.powershot==True:
+                self.powershot=False
                 main_state.playerbullet += [
-                    bullet(self.bulletimg, 8, [-2, 6], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                    bullet(self.bulletimg, 8, [-2, 6], main_state.Enemy, self.dm, self.x, self.y, 10, 85, 303, 25, 25)]
                 main_state.playerbullet += [
-                    bullet(self.bulletimg, 8, [2, 6], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                    bullet(self.bulletimg, 8, [2, 6], main_state.Enemy, self.dm, self.x, self.y, 10, 85, 303, 25, 25)]
                 main_state.playerbullet += [
-                    bullet(self.bulletimg, 8, [-4, 4], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                    bullet(self.bulletimg, 8, [-4, 4], main_state.Enemy, self.dm, self.x, self.y, 10, 85, 303, 25, 25)]
                 main_state.playerbullet += [
-                    bullet(self.bulletimg, 8, [4, 4], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                    bullet(self.bulletimg, 8, [4, 4], main_state.Enemy, self.dm, self.x, self.y, 10, 85, 303, 25, 25)]
                 main_state.playerbullet += [
-                    bullet(self.bulletimg, 8, [-6, 2], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                    bullet(self.bulletimg, 8, [-6, 2], main_state.Enemy,self.dm/2, self.x, self.y, 10, 85, 303, 25, 25)]
                 main_state.playerbullet += [
-                    bullet(self.bulletimg, 8, [6, 2], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
+                    bullet(self.bulletimg, 8, [6, 2], main_state.Enemy, self.dm/2, self.x, self.y, 10, 85, 303, 25, 25)]
                 main_state.playerbullet += [
                     bullet(self.bulletimg, 8, [-6, 0], main_state.Enemy, 1, self.x, self.y, 10, 85, 303, 25, 25)]
                 main_state.playerbullet += [
@@ -772,8 +809,8 @@ class Boss1:
     threat=0
     image=None
     bulletimg=None
-    hp=3000#체력
-    df=2#방어력
+    hp=6000#체력
+    df=3#방어력
     dm=13#공격력
     sp=2#속도
     fs=30#발사속도
@@ -892,7 +929,7 @@ class Boss2:
     threat=0
     image=None
     bulletimg=None
-    hp=8000#체력
+    hp=14000#체력
     df=5#방어력
     dm=25#공격력
     sp=3#속도
@@ -1166,6 +1203,10 @@ class Pilot:
             self.dTick = 0
 
     def Attack(self,p):
+        if main_state.godmode==True:
+            self.dm=500
+            self.hp=150
+
         if self.fireframe==0:
             self.sound1.play(1)
 
